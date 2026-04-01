@@ -19,17 +19,22 @@ const INITIAL = [
 let API_KEY = localStorage.getItem("speakup_api_key") || "";
 
 async function callClaude(messages, system) {
+  const key = API_KEY || localStorage.getItem("speakup_api_key") || "";
+  if (!key) throw new Error("API 키가 없어요. 🔑 버튼을 눌러 키를 입력해주세요.");
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": API_KEY,
+      "x-api-key": key,
       "anthropic-version": "2023-06-01",
       "anthropic-dangerous-allow-browser": "true",
     },
     body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system, messages }),
   });
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  if (!res.ok) {
+    const errBody = await res.text();
+    throw new Error(`${res.status}: ${errBody}`);
+  }
   const d = await res.json();
   return d.content[0].text;
 }
@@ -157,7 +162,8 @@ Respond ONLY with valid JSON (no markdown):
       setSentences(s => s.map(x => x.id === cur.id ? { ...x, reviewCount: x.reviewCount + 1 } : x));
     } catch (err) {
       console.error("eval error:", err);
-      setEvalResult({ score: 0, grade: "하", feedbackKo: "평가 중 오류가 발생했어요.", correctionKo: "", bestVersion: cur.english });
+      const msg = err?.message || String(err);
+      setEvalResult({ score: 0, grade: "하", feedbackKo: `오류: ${msg}`, correctionKo: "", bestVersion: cur.english });
       setPhase("result");
     }
   };
