@@ -76,6 +76,8 @@ export default function App() {
   const [genTopic, setGenTopic] = useState("");
   const [generating, setGenerating] = useState(false);
   const recRef = useRef(null);
+  const transcriptRef = useRef("");
+  const evaluatedRef = useRef(false);
 
   const displayList = filterBookmarks ? sentences.filter(s => s.bookmarked) : sentences;
   const current = displayList[idx] || null;
@@ -95,13 +97,24 @@ export default function App() {
     if (!SR) { alert("Chrome에서만 음성인식이 가능해요."); return; }
     const rec = new SR();
     rec.lang = "en-US"; rec.continuous = false; rec.interimResults = false;
+    transcriptRef.current = "";
+    evaluatedRef.current = false;
     rec.onstart = () => setPhase("listening");
-    rec.onresult = async (e) => {
-      const t = e.results[0][0].transcript;
-      setSpokenText(t); setPhase("evaluating");
-      await doEval(t);
+    rec.onresult = (e) => {
+      transcriptRef.current = e.results[0][0].transcript;
     };
-    rec.onerror = (e) => { if (e.error !== "aborted") setPhase("listening_ready"); else setPhase("listening_ready"); };
+    rec.onend = async () => {
+      if (evaluatedRef.current) return;
+      evaluatedRef.current = true;
+      const t = transcriptRef.current;
+      if (t) {
+        setSpokenText(t); setPhase("evaluating");
+        await doEval(t);
+      } else {
+        setPhase("listening_ready");
+      }
+    };
+    rec.onerror = (e) => { if (e.error !== "aborted") { evaluatedRef.current = true; setPhase("listening_ready"); } };
     recRef.current = rec; rec.start();
   }, [current, retryCount]);
 
@@ -204,8 +217,7 @@ Respond ONLY with valid JSON (no markdown):
             </div>
             {!useTyping ? (
               <>
-                {phase === "ready" && <div style={{ textAlign: "center", color: C.muted, fontSize: 14, padding: "12px 0", fontFamily: "'Noto Sans KR'" }}>먼저 한국어 문장을 들어보세요 👆</div>}
-                {phase === "listening_ready" && <button style={mkBtn(C.orangeLight, C.orange, `1px solid ${C.orange}40`)} onClick={startListening}><span>🎤</span><span>말하기 시작</span></button>}
+                {(phase === "ready" || phase === "listening_ready") && <button style={mkBtn(C.orangeLight, C.orange, `1px solid ${C.orange}40`)} onClick={startListening}><span>🎤</span><span>말하기 시작</span></button>}
                 {phase === "processing" && <div style={{ textAlign: "center", color: C.muted, fontSize: 14, padding: "12px 0", fontFamily: "'Noto Sans KR'" }}>🎙️ 음성 처리 중...</div>}
                 {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => { try { recRef.current?.stop(); } catch(e){} setPhase("processing"); }}><Waveform active /><span>듣는 중... (탭하면 중지)</span></button>}
               </>
