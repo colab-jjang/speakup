@@ -101,7 +101,7 @@ export default function App() {
       setSpokenText(t); setPhase("evaluating");
       await doEval(t);
     };
-    rec.onerror = () => setPhase("listening_ready");
+    rec.onerror = (e) => { if (e.error !== "aborted") setPhase("listening_ready"); };
     recRef.current = rec; rec.start();
   }, [current, retryCount]);
 
@@ -206,7 +206,7 @@ Respond ONLY with valid JSON (no markdown):
               <>
                 {phase === "ready" && <div style={{ textAlign: "center", color: C.muted, fontSize: 14, padding: "12px 0", fontFamily: "'Noto Sans KR'" }}>먼저 한국어 문장을 들어보세요 👆</div>}
                 {phase === "listening_ready" && <button style={mkBtn(C.orangeLight, C.orange, `1px solid ${C.orange}40`)} onClick={startListening}><span>🎤</span><span>말하기 시작</span></button>}
-                {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => recRef.current?.stop()}><Waveform active /><span>듣는 중... (탭하면 중지)</span></button>}
+                {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => { try { recRef.current?.stop(); recRef.current?.abort(); } catch(e){} setPhase("listening_ready"); }}><Waveform active /><span>듣는 중... (탭하면 중지)</span></button>}
               </>
             ) : (
               <>
