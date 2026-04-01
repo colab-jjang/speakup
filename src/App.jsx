@@ -16,19 +16,11 @@ const INITIAL = [
   { id: 4, korean: "날씨가 좋으면 공원에 산책하러 갈게요.", english: "If the weather is nice, I'll go for a walk in the park.", bookmarked: false, reviewCount: 0 },
 ];
 
-let API_KEY = localStorage.getItem("speakup_api_key") || "";
 
 async function callClaude(messages, system) {
-  const key = API_KEY || localStorage.getItem("speakup_api_key") || "";
-  if (!key) throw new Error("API 키가 없어요. 🔑 버튼을 눌러 키를 입력해주세요.");
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const res = await fetch("/api/evaluate", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-allow-browser": "true",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system, messages }),
   });
   if (!res.ok) {
@@ -73,8 +65,6 @@ function Waveform({ active }) {
 }
 
 export default function App() {
-  const [apiKey, setApiKey] = useState(localStorage.getItem("speakup_api_key") || "");
-  const [apiKeyInput, setApiKeyInput] = useState("");
   const [view, setView] = useState("practice");
   const [sentences, setSentences] = useState(INITIAL);
   const [idx, setIdx] = useState(0);
@@ -439,55 +429,6 @@ Respond ONLY with valid JSON (no markdown):
 
   const tabs = [{ key: "practice", label: "연습" }, { key: "history", label: "기록" }, { key: "manage", label: "관리" }];
 
-  const saveApiKey = () => {
-    const key = apiKeyInput.trim();
-    if (!key.startsWith("sk-ant-")) { alert("올바른 Anthropic API 키를 입력해주세요. (sk-ant- 로 시작)"); return; }
-    localStorage.setItem("speakup_api_key", key);
-    API_KEY = key;
-    setApiKey(key);
-    setApiKeyInput("");
-  };
-
-  const clearApiKey = () => {
-    localStorage.removeItem("speakup_api_key");
-    API_KEY = "";
-    setApiKey("");
-  };
-
-  if (!apiKey) return (
-    <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link href={FONTS} rel="stylesheet" />
-      <div style={{ minHeight: "100vh", background: C.bg, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-        <div style={{ background: C.paper, borderRadius: 20, border: `1px solid ${C.border}`, padding: "36px 28px", maxWidth: 420, width: "100%", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 700, color: C.ink, marginBottom: 6 }}>
-            Speak<span style={{ color: C.orange }}>Up</span>
-          </div>
-          <p style={{ fontFamily: "'Noto Sans KR'", fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 24 }}>
-            AI 평가 기능을 사용하려면<br />Anthropic API 키가 필요해요.
-          </p>
-          <div style={{ background: C.greenLight, borderRadius: 10, padding: "12px 14px", marginBottom: 20, fontSize: 13, color: C.green, fontFamily: "'Noto Sans KR'", lineHeight: 1.6 }}>
-            💡 <strong>console.anthropic.com</strong> 에서 무료로 발급받을 수 있어요. API Keys 메뉴에서 생성하세요.
-          </div>
-          <input
-            value={apiKeyInput}
-            onChange={e => setApiKeyInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && saveApiKey()}
-            placeholder="sk-ant-..."
-            type="password"
-            style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, background: C.bg, fontFamily: "'IBM Plex Mono'", fontSize: 14, color: C.ink, outline: "none", boxSizing: "border-box", marginBottom: 12 }}
-          />
-          <button onClick={saveApiKey} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "none", background: C.green, color: "#fff", fontFamily: "'Noto Sans KR'", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-            저장하고 시작하기
-          </button>
-          <p style={{ fontFamily: "'Noto Sans KR'", fontSize: 11, color: C.muted, textAlign: "center", marginTop: 14, lineHeight: 1.6 }}>
-            키는 이 기기에만 저장되며 외부로 전송되지 않아요.
-          </p>
-        </div>
-      </div>
-    </>
-  );
-
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -498,13 +439,8 @@ Respond ONLY with valid JSON (no markdown):
             <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 700, color: C.ink, letterSpacing: "-0.5px" }}>
               Speak<span style={{ color: C.orange }}>Up</span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 11, color: C.muted }}>
-                {sentences.length}문장 · 기록 {history.length}개
-              </div>
-              <button onClick={clearApiKey} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 8, padding: "4px 8px", fontSize: 11, color: C.muted, cursor: "pointer", fontFamily: "'Noto Sans KR'" }}>
-                🔑
-              </button>
+            <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 11, color: C.muted }}>
+              {sentences.length}문장 · 기록 {history.length}개
             </div>
           </div>
           <div style={{ display: "flex", borderBottom: `2px solid ${C.border}` }}>
