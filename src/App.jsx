@@ -78,6 +78,7 @@ export default function App() {
   const recRef = useRef(null);
   const transcriptRef = useRef("");
   const evaluatedRef = useRef(false);
+  const doEvalRef = useRef(null);
 
   const displayList = filterBookmarks ? sentences.filter(s => s.bookmarked) : sentences;
   const current = displayList[idx] || null;
@@ -109,7 +110,7 @@ export default function App() {
       const t = transcriptRef.current;
       if (t) {
         setSpokenText(t); setPhase("evaluating");
-        await doEval(t);
+        await doEvalRef.current(t);
       } else {
         setPhase("listening_ready");
       }
@@ -146,8 +147,23 @@ Respond ONLY with valid JSON (no markdown):
       setPhase("result");
     }
   };
+  doEvalRef.current = doEval;
 
-  const reset = () => { window.speechSynthesis.cancel(); setPhase("ready"); setSpokenText(""); setTypedText(""); setEvalResult(null); setRetryCount(0); };
+  const touchStartX = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 60) {
+      if (diff > 0) goTo(1);
+      else goTo(-1);
+    }
+    touchStartX.current = null;
+  };
   const retry = () => { setRetryCount(r => r + 1); setPhase("ready"); setSpokenText(""); setTypedText(""); setEvalResult(null); };
   const goTo = (delta) => { if (!displayList.length) return; setIdx(i => (i + delta + displayList.length) % displayList.length); reset(); };
   const toggleBookmark = (id) => setSentences(s => s.map(x => x.id === id ? { ...x, bookmarked: !x.bookmarked } : x));
@@ -179,7 +195,7 @@ Respond ONLY with valid JSON (no markdown):
     );
 
     return (
-      <>
+      <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
           <button onClick={() => { setFilterBookmarks(f => !f); setIdx(0); reset(); }} style={{ background: filterBookmarks ? C.green : C.paper, border: `1px solid ${filterBookmarks ? C.green : C.border}`, borderRadius: 20, padding: "7px 16px", fontSize: 12, color: filterBookmarks ? "#fff" : C.muted, cursor: "pointer", fontFamily: "'Noto Sans KR'", fontWeight: 600 }}>
             {filterBookmarks ? "★ 즐겨찾기만" : "☆ 즐겨찾기만 보기"}
@@ -279,12 +295,24 @@ Respond ONLY with valid JSON (no markdown):
             )}
 
             {evalResult.grade === "하" ? (
-              <button style={mkBtn("#fee2e2", "#991b1b", "1.5px solid #fca5a5")} onClick={retry}>🔄 다시 도전하기</button>
+              <>
+                <button style={mkBtn("#fee2e2", "#991b1b", "1.5px solid #fca5a5")} onClick={retry}>🔄 다시 도전하기</button>
+                <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={() => goTo(-1)}>←</button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={() => goTo(1)}>→</button>
+                </div>
+              </>
             ) : (
-              <div style={{ display: "flex", gap: 10 }}>
-                <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={reset}>🔄 다시 시도</button>
-                <button style={{ ...mkBtn(C.green, "#fff"), flex: 1 }} onClick={() => goTo(1)}>다음 문장 →</button>
-              </div>
+              <>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={reset}>🔄 다시 시도</button>
+                  <button style={{ ...mkBtn(C.green, "#fff"), flex: 1 }} onClick={() => goTo(1)}>다음 문장 →</button>
+                </div>
+                <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={() => goTo(-1)}>←</button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={() => goTo(1)}>→</button>
+                </div>
+              </>
             )}
           </div>
         )}
@@ -295,7 +323,7 @@ Respond ONLY with valid JSON (no markdown):
             <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={() => goTo(1)}>→</button>
           </div>
         )}
-      </>
+      </div>
     );
   };
 
