@@ -18,10 +18,18 @@ const addDays = (n) => {
 };
 const isdue = (s) => !s.nextReviewDate || s.nextReviewDate <= todayStr();
 
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function buildQueue(sentences, goal) {
-  const never = sentences.filter(s => !s.nextReviewDate);
-  const due = sentences.filter(s => s.nextReviewDate && s.nextReviewDate <= todayStr())
-    .sort((a, b) => a.nextReviewDate.localeCompare(b.nextReviewDate));
+  const never = shuffle(sentences.filter(s => !s.nextReviewDate));
+  const due = shuffle(sentences.filter(s => s.nextReviewDate && s.nextReviewDate <= todayStr()));
   const combined = [...never, ...due];
   return combined.slice(0, goal);
 }
@@ -45,7 +53,7 @@ async function callClaude(messages, system) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system, messages }),
   });
-  if (!res.ok) { const e = await res.text(); throw new Error(`${res.status}: ${e}`); }
+  if (!res.ok) { const e = await res.text(); throw new Error(res.status + ": " + e); }
   const d = await res.json();
   return d.content[0].text;
 }
@@ -59,16 +67,18 @@ function getGrade(score) {
 // ── Sub-components ─────────────────────────────────────────────────────────
 function GradeBadge({ grade, large }) {
   const size = large ? { fontSize: 20, padding: "7px 20px", borderRadius: 28 } : { fontSize: 11, padding: "3px 9px", borderRadius: 16 };
-  return <span style={{ ...size, fontWeight: 700, fontFamily: "'Nanum Myeongjo', serif", background: C[`${grade}bg`], color: C[grade], border: `1.5px solid ${C[grade]}30`, display: "inline-block" }}>{grade}</span>;
+  const bgKey = grade + "bg";
+  const borderColor = C[grade] + "30";
+  return <span style={{ ...size, fontWeight: 700, fontFamily: "'Nanum Myeongjo', serif", background: C[bgKey], color: C[grade], border: "1.5px solid " + borderColor, display: "inline-block" }}>{grade}</span>;
 }
 
 function Waveform({ active }) {
   return (
     <span style={{ display: "inline-flex", gap: 2, alignItems: "center", height: 18 }}>
       {[0,1,2,3,4].map(i => (
-        <span key={i} style={{ display: "inline-block", width: 3, borderRadius: 2, background: active ? C.orange : C.border, height: active ? undefined : 6, animation: active ? `bar 0.7s ease-in-out infinite alternate ${i*0.1}s` : "none" }} />
+        <span key={i} style={{ display: "inline-block", width: 3, borderRadius: 2, background: active ? C.orange : C.border, height: active ? undefined : 6, animation: active ? "bar 0.7s ease-in-out infinite alternate " + (i*0.1) + "s" : "none" }} />
       ))}
-      <style>{`@keyframes bar{0%{height:3px}100%{height:18px}}`}</style>
+      <style>{"@keyframes bar{0%{height:3px}100%{height:18px}}"}</style>
     </span>
   );
 }
@@ -99,9 +109,17 @@ export default function App() {
   // Manage state
   const [newKo, setNewKo] = useState("");
   const [newEn, setNewEn] = useState("");
-  const [translating, setTranslating] = useState(null); // "ko" | "en" | null
+  const [translating, setTranslating] = useState(null);
   const [genTopic, setGenTopic] = useState("");
+  const [genCount, setGenCount] = useState(5);
+  const [genCountCustom, setGenCountCustom] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [bulkText, setBulkText] = useState("");
+  const [bulkError, setBulkError] = useState("");
+  const [bulkSuccess, setBulkSuccess] = useState("");
+  const [csvError, setCsvError] = useState("");
+  const [csvSuccess, setCsvSuccess] = useState("");
+  const [manageTab, setManageTab] = useState("single"); // single | bulk | csv | ai
 
   const recRef = useRef(null);
   const transcriptRef = useRef("");
@@ -177,10 +195,8 @@ export default function App() {
     if (!cur) return;
     try {
       const raw = await callClaude(
-        [{ role: "user", content: `Korean: "${cur.korean}"\nCorrect English: "${cur.english}"\nUser answered: "${answer}"` }],
-        `You are a friendly English tutor. Evaluate Korean-to-English translation.
-Respond ONLY with valid JSON (no markdown):
-{"score":<0-100>,"feedbackKo":"<1-2 sentences in Korean>","correctionKo":"<correction in Korean or empty string>","bestVersion":"<ideal English>"}`
+        [{ role: "user", content: "Korean: \"" + cur.korean + "\"\nCorrect English: \"" + cur.english + "\"\nUser answered: \"" + answer + "\"" }],
+        "You are a friendly English tutor. Evaluate Korean-to-English translation.\nRespond ONLY with valid JSON (no markdown):\n{\"score\":<0-100>,\"feedbackKo\":\"<1-2 sentences in Korean>\",\"correctionKo\":\"<correction in Korean or empty string>\",\"bestVersion\":\"<ideal English>\"}"
       );
       const parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
       const grade = getGrade(parsed.score);
@@ -204,7 +220,7 @@ Respond ONLY with valid JSON (no markdown):
       setHistory(h => [entry, ...h]);
     } catch (err) {
       const msg = err?.message || String(err);
-      setEvalResult({ score: 0, grade: "하", feedbackKo: `오류: ${msg}`, correctionKo: "", bestVersion: cur.english });
+      setEvalResult({ score: 0, grade: "하", feedbackKo: "오류: " + msg, correctionKo: "", bestVersion: cur.english });
       setPhase("result");
     }
   };
@@ -235,13 +251,13 @@ Respond ONLY with valid JSON (no markdown):
       const raw = await callClaude(
         [{ role: "user", content: text.trim() }],
         dir === "ko"
-          ? `Translate the following English sentence to natural Korean. Respond with ONLY the Korean translation, nothing else.`
-          : `Translate the following Korean sentence to natural English. Respond with ONLY the English translation, nothing else.`
+          ? "Translate the following English sentence to natural Korean. Respond with ONLY the Korean translation, nothing else."
+          : "Translate the following Korean sentence to natural English. Respond with ONLY the English translation, nothing else."
       );
       if (dir === "ko") setNewKo(raw.trim());
       else setNewEn(raw.trim());
     } catch (err) {
-      setTranslateError(`번역 오류: ${err?.message || String(err)}`);
+      setTranslateError("번역 오류: " + (err && err.message ? err.message : String(err)));
     }
     setTranslating(null);
   };
@@ -253,24 +269,78 @@ Respond ONLY with valid JSON (no markdown):
   };
 
   const generateAI = async () => {
+    const count = genCountCustom ? parseInt(genCountCustom) : genCount;
+    if (!count || count < 1 || count > 50) { alert("1~50 사이의 숫자를 입력해주세요."); return; }
     setGenerating(true);
     try {
       const raw = await callClaude(
         [{ role: "user", content: genTopic || "다양한 일상 주제" }],
-        `Generate 5 Korean-English sentence pairs for translation practice.
-Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..."},...]`
+        "Generate exactly " + count + " Korean-English sentence pairs for translation practice. Vary difficulty levels.\nRespond ONLY with valid JSON array (no markdown): [{\"korean\":\"...\",\"english\":\"...\"},...]"
       );
       const arr = JSON.parse(raw.replace(/```json|```/g, "").trim());
       setSentences(p => [...p, ...arr.map((s, i) => ({ id: Date.now() + i, ...s, bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null }))]);
-      setGenTopic("");
-    } catch { alert("생성 중 오류가 발생했어요."); }
+      setGenTopic(""); setGenCountCustom("");
+    } catch (err) { alert("생성 오류: " + (err && err.message ? err.message : "")); }
     setGenerating(false);
   };
 
+  // 일괄 텍스트 입력 (한국어 | 영어 형식)
+  const addBulk = () => {
+    setBulkError(""); setBulkSuccess("");
+    const lines = bulkText.split("\n").map(l => l.trim()).filter(l => l);
+    const parsed = [];
+    const failed = [];
+    lines.forEach((line, i) => {
+      const parts = line.split("|").map(p => p.trim());
+      if (parts.length === 2 && parts[0] && parts[1]) {
+        parsed.push({ id: Date.now() + i, korean: parts[0], english: parts[1], bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null });
+      } else {
+        failed.push(i + 1);
+      }
+    });
+    if (parsed.length === 0) { setBulkError("올바른 형식이 없어요. '한국어 | English' 형식으로 입력해주세요."); return; }
+    setSentences(p => [...p, ...parsed]);
+    setBulkText("");
+    setBulkSuccess(parsed.length + "개 추가됐어요!" + (failed.length > 0 ? " (" + failed.join(", ") + "번 줄 오류)" : ""));
+    setTimeout(() => setBulkSuccess(""), 3000);
+  };
+
+  // CSV/엑셀 파일 업로드
+  const handleCSV = (e) => {
+    setCsvError(""); setCsvSuccess("");
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target.result;
+      const lines = text.split("\n").map(l => l.trim()).filter(l => l);
+      const parsed = [];
+      const failed = [];
+      // Skip header if first line has no | or looks like a header
+      const startIdx = (lines[0]?.toLowerCase().includes("korean") || lines[0]?.toLowerCase().includes("한국")) ? 1 : 0;
+      lines.slice(startIdx).forEach((line, i) => {
+        // Support both | and , as separator
+        const sep = line.includes("|") ? "|" : ",";
+        const parts = line.split(sep).map(p => p.trim().replace(/^"|"$/g, ""));
+        if (parts.length >= 2 && parts[0] && parts[1]) {
+          parsed.push({ id: Date.now() + i, korean: parts[0], english: parts[1], bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null });
+        } else {
+          failed.push(startIdx + i + 1);
+        }
+      });
+      if (parsed.length === 0) { setCsvError("파일에서 문장을 찾지 못했어요. 형식을 확인해주세요."); return; }
+      setSentences(p => [...p, ...parsed]);
+      setCsvSuccess(parsed.length + "개 추가됐어요!" + (failed.length > 0 ? " (" + failed.join(", ") + "번 줄 오류)" : ""));
+      setTimeout(() => setCsvSuccess(""), 3000);
+    };
+    reader.readAsText(file, "UTF-8");
+    e.target.value = "";
+  };
+
   // ── Shared styles ──────────────────────────────────────────────────────
-  const card = { background: C.paper, borderRadius: 16, border: `1px solid ${C.border}`, padding: "20px", marginBottom: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" };
+  const card = { background: C.paper, borderRadius: 16, border: "1px solid " + C.border, padding: "20px", marginBottom: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" };
   const mkBtn = (bg, color, border) => ({ width: "100%", padding: "14px", borderRadius: 12, border: border || "none", background: bg, color, fontFamily: "'Nanum Myeongjo', serif", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 });
-  const inp = { width: "100%", padding: "12px 14px", borderRadius: 10, boxSizing: "border-box", border: `1.5px solid ${C.border}`, background: C.bg, fontFamily: "'Nanum Myeongjo', serif", fontSize: 14, color: C.ink, outline: "none" };
+  const inp = { width: "100%", padding: "12px 14px", borderRadius: 10, boxSizing: "border-box", border: "1.5px solid " + C.border, background: C.bg, fontFamily: "'Nanum Myeongjo', serif", fontSize: 14, color: C.ink, outline: "none" };
   const lbl = { fontSize: 11, fontWeight: 700, letterSpacing: 1.2, color: C.muted, textTransform: "uppercase", marginBottom: 8, display: "block" };
 
   // Touch swipe
@@ -298,7 +368,7 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
           {["상","중","하"].map(g => {
             const cnt = history.filter(h => h.date.slice(0,10) === todayStr() && h.grade === g).length;
             return cnt > 0 ? (
-              <div key={g} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: `1px solid ${C.border}` }}>
+              <div key={g} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid " + C.border }}>
                 <GradeBadge grade={g} />
                 <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, color: C.muted }}>{cnt}개</span>
               </div>
@@ -326,7 +396,7 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
             <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.muted }}>{todayDone} / {dailyGoal}개</span>
           </div>
           <div style={{ height: 6, background: C.border, borderRadius: 3, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${Math.min(100, (todayDone / dailyGoal) * 100)}%`, background: C.green, borderRadius: 3, transition: "width 0.4s ease" }} />
+            <div style={{ height: "100%", width: Math.min(100, (todayDone / dailyGoal) * 100) + "%", background: C.green, borderRadius: 3, transition: "width 0.4s ease" }} />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
             <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 10, color: C.muted }}>{qIdx + 1} / {queue.length} 번째 문장</span>
@@ -347,7 +417,7 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
             </button>
           </div>
           <p style={{ fontSize: 22, fontWeight: 700, color: C.ink, lineHeight: 1.55, margin: "0 0 18px", fontFamily: "'Nanum Myeongjo', serif" }}>{current.korean}</p>
-          <button style={mkBtn(C.greenLight, C.green, `1px solid ${C.green}30`)} onClick={speakKorean} disabled={phase === "speaking"}>
+          <button style={mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30")} onClick={speakKorean} disabled={phase === "speaking"}>
             {phase === "speaking" ? <><Waveform active /><span>읽는 중...</span></> : <><span>🔊</span><span>한국어 듣기</span></>}
           </button>
         </div>
@@ -357,13 +427,13 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
           <div style={card}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
               <span style={lbl}>영어로 번역해서 답하세요</span>
-              <button onClick={() => setUseTyping(t => !t)} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 8, padding: "4px 10px", fontSize: 12, color: C.muted, cursor: "pointer", fontFamily: "'Nanum Myeongjo', serif" }}>
+              <button onClick={() => setUseTyping(t => !t)} style={{ background: "none", border: "1px solid " + C.border, borderRadius: 8, padding: "4px 10px", fontSize: 12, color: C.muted, cursor: "pointer", fontFamily: "'Nanum Myeongjo', serif" }}>
                 {useTyping ? "🎤 음성으로" : "⌨️ 타이핑으로"}
               </button>
             </div>
             {!useTyping ? (
               <>
-                {(phase === "ready" || phase === "listening_ready") && <button style={mkBtn(C.orangeLight, C.orange, `1px solid ${C.orange}40`)} onClick={startListening}><span>🎤</span><span>말하기 시작</span></button>}
+                {(phase === "ready" || phase === "listening_ready") && <button style={mkBtn(C.orangeLight, C.orange, "1px solid " + C.orange + "40")} onClick={startListening}><span>🎤</span><span>말하기 시작</span></button>}
                 {phase === "processing" && <div style={{ textAlign: "center", color: C.muted, fontSize: 14, padding: "12px 0", fontFamily: "'Nanum Myeongjo', serif" }}>🎙️ 음성 처리 중...</div>}
                 {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => { try { recRef.current?.stop(); } catch(e){} setPhase("processing"); }}><Waveform active /><span>듣는 중... (탭하면 중지)</span></button>}
               </>
@@ -388,7 +458,7 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
         {/* Result */}
         {phase === "result" && evalResult && (
           <div style={card}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 18, paddingBottom: 18, borderBottom: `1px solid ${C.border}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 18, paddingBottom: 18, borderBottom: "1px solid " + C.border }}>
               <GradeBadge grade={evalResult.grade} large />
               <div>
                 <div style={{ fontWeight: 700, fontSize: 16, color: C.ink, fontFamily: "'Nanum Myeongjo', serif", marginBottom: 4 }}>
@@ -417,14 +487,14 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
             </div>
 
             <span style={lbl}>베스트 번역</span>
-            <div style={{ background: C.greenLight, borderRadius: 10, padding: "12px 14px", borderLeft: `3px solid ${C.green}`, marginBottom: evalResult.correctionKo ? 12 : 16 }}>
+            <div style={{ background: C.greenLight, borderRadius: 10, padding: "12px 14px", borderLeft: "3px solid " + C.green, marginBottom: evalResult.correctionKo ? 12 : 16 }}>
               <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, color: C.green }}>{evalResult.bestVersion}</span>
             </div>
 
             {evalResult.correctionKo && (
               <>
                 <span style={lbl}>교정 포인트</span>
-                <div style={{ background: C.중bg, borderRadius: 10, padding: "12px 14px", borderLeft: `3px solid ${C.중}`, marginBottom: 16 }}>
+                <div style={{ background: C.중bg, borderRadius: 10, padding: "12px 14px", borderLeft: "3px solid " + C.중, marginBottom: 16 }}>
                   <span style={{ fontSize: 13, color: C.중, fontFamily: "'Nanum Myeongjo', serif", lineHeight: 1.6 }}>{evalResult.correctionKo}</span>
                 </div>
               </>
@@ -434,19 +504,19 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
               <>
                 <button style={mkBtn("#fee2e2", "#991b1b", "1.5px solid #fca5a5")} onClick={retry}>🔄 다시 도전하기</button>
                 <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>←</button>
-                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>→</button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>←</button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>→</button>
                 </div>
               </>
             ) : (
               <>
                 <div style={{ display: "flex", gap: 10 }}>
-                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1 }} onClick={reset}>🔄 다시 시도</button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1 }} onClick={reset}>🔄 다시 시도</button>
                   <button style={{ ...mkBtn(C.green, "#fff"), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>다음 문장 →</button>
                 </div>
                 <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>←</button>
-                  <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>→</button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>←</button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>→</button>
                 </div>
               </>
             )}
@@ -455,8 +525,8 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
 
         {phase !== "result" && (
           <div style={{ display: "flex", gap: 10 }}>
-            <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>←</button>
-            <button style={{ ...mkBtn(C.bg, C.muted, `1px solid ${C.border}`), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>→</button>
+            <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>←</button>
+            <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>→</button>
           </div>
         )}
       </div>
@@ -489,12 +559,12 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
       <>
         {/* Streak + summary */}
         <div style={{ ...card, display: "flex", padding: 0, overflow: "hidden" }}>
-          <div style={{ flex: 1, textAlign: "center", padding: "18px 0", borderRight: `1px solid ${C.border}` }}>
+          <div style={{ flex: 1, textAlign: "center", padding: "18px 0", borderRight: "1px solid " + C.border }}>
             <div style={{ fontSize: 28, fontWeight: 700, fontFamily: "'Nanum Myeongjo', serif", color: C.orange }}>{streak}</div>
             <div style={{ fontFamily: "'Nanum Myeongjo', serif", fontSize: 12, color: C.muted, marginTop: 2 }}>🔥 연속 학습일</div>
           </div>
           {["상","중","하"].map((g, i) => (
-            <div key={g} style={{ flex: 1, textAlign: "center", padding: "18px 0", borderRight: i < 2 ? `1px solid ${C.border}` : "none" }}>
+            <div key={g} style={{ flex: 1, textAlign: "center", padding: "18px 0", borderRight: i < 2 ? "1px solid " + C.border : "none" }}>
               <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Nanum Myeongjo', serif", color: C[g], marginBottom: 4 }}>{gc[g]}</div>
               <GradeBadge grade={g} />
             </div>
@@ -512,10 +582,12 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
             {dayNames.map(d => <div key={d} style={{ textAlign: "center", fontSize: 11, color: C.muted, fontFamily: "'IBM Plex Mono'", padding: "4px 0" }}>{d}</div>)}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
-            {Array(firstDay).fill(null).map((_, i) => <div key={`e${i}`} />)}
+            {Array(firstDay).fill(null).map((_, i) => <div key={"e" + i} />)}
             {Array(daysInMonth).fill(null).map((_, i) => {
               const day = i + 1;
-              const dateStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+              const mm = String(m + 1).padStart(2, "0");
+              const dd = String(day).padStart(2, "0");
+              const dateStr = y + "-" + mm + "-" + dd;
               const studied = studyDates.includes(dateStr);
               const isToday = dateStr === todayStr();
               return (
@@ -527,7 +599,7 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
           </div>
           <div style={{ display: "flex", gap: 12, marginTop: 14, fontSize: 11, fontFamily: "'Nanum Myeongjo', serif", color: C.muted }}>
             <span><span style={{ display: "inline-block", width: 12, height: 12, background: C.green, borderRadius: 3, verticalAlign: "middle", marginRight: 4 }} />학습 완료</span>
-            <span><span style={{ display: "inline-block", width: 12, height: 12, background: C.greenLight, border: `1px solid ${C.green}`, borderRadius: 3, verticalAlign: "middle", marginRight: 4 }} />오늘</span>
+            <span><span style={{ display: "inline-block", width: 12, height: 12, background: C.greenLight, border: "1px solid " + C.green, borderRadius: 3, verticalAlign: "middle", marginRight: 4 }} />오늘</span>
           </div>
         </div>
 
@@ -557,77 +629,148 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
   };
 
   // ── Manage View ────────────────────────────────────────────────────────
-  const ManageView = () => (
-    <>
-      {/* Daily goal */}
-      <div style={card}>
-        <span style={lbl}>🎯 하루 목표 문장 수</span>
-        <div style={{ display: "flex", gap: 10 }}>
-          {[5, 10, 15].map(n => (
-            <button key={n} onClick={() => setDailyGoal(n)} style={{ flex: 1, padding: "12px", borderRadius: 12, border: `1.5px solid ${dailyGoal === n ? C.green : C.border}`, background: dailyGoal === n ? C.greenLight : C.bg, color: dailyGoal === n ? C.green : C.muted, fontFamily: "'Nanum Myeongjo', serif", fontSize: 18, fontWeight: 700, cursor: "pointer" }}>
-              {n}
-            </button>
+  const ManageView = () => {
+    const manageTabs = [
+      { key: "single", label: "한 문장" },
+      { key: "bulk", label: "일괄 입력" },
+      { key: "csv", label: "파일 업로드" },
+      { key: "ai", label: "AI 생성" },
+    ];
+    return (
+      <>
+        {/* Daily goal */}
+        <div style={card}>
+          <span style={lbl}>🎯 하루 목표 문장 수</span>
+          <div style={{ display: "flex", gap: 10 }}>
+            {[5, 10, 15].map(n => (
+              <button key={n} onClick={() => setDailyGoal(n)} style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid " + (dailyGoal === n ? C.green : C.border), background: dailyGoal === n ? C.greenLight : C.bg, color: dailyGoal === n ? C.green : C.muted, fontFamily: "'Nanum Myeongjo', serif", fontSize: 18, fontWeight: 700, cursor: "pointer" }}>
+                {n}
+              </button>
+            ))}
+          </div>
+          <div style={{ marginTop: 10, fontSize: 12, color: C.muted, fontFamily: "'Nanum Myeongjo', serif", lineHeight: 1.6 }}>
+            현재 큐: 복습 필요 {sentences.filter(s => s.nextReviewDate && s.nextReviewDate <= todayStr()).length}개 · 새 문장 {sentences.filter(s => !s.nextReviewDate).length}개
+          </div>
+        </div>
+
+        {/* Add sentence - tabbed */}
+        <div style={card}>
+          {/* Sub tabs */}
+          <div style={{ display: "flex", gap: 0, marginBottom: 18, background: C.bg, borderRadius: 10, padding: 4 }}>
+            {manageTabs.map(t => (
+              <button key={t.key} onClick={() => setManageTab(t.key)} style={{ flex: 1, padding: "8px 4px", borderRadius: 8, border: "none", cursor: "pointer", fontFamily: "'Nanum Myeongjo', serif", fontWeight: 700, fontSize: 12, background: manageTab === t.key ? C.paper : "transparent", color: manageTab === t.key ? C.green : C.muted, boxShadow: manageTab === t.key ? "0 1px 3px rgba(0,0,0,0.1)" : "none", transition: "all 0.15s" }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Single */}
+          {manageTab === "single" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <span style={lbl}>✏️ 한 문장씩 추가</span>
+              <input style={inp} placeholder="한국어 문장" value={newKo} onChange={e => setNewKo(e.target.value)} />
+              {newKo.trim() && (
+                <button onClick={() => autoTranslate("en")} disabled={!!translating} style={mkBtn(C.orangeLight, C.orange, "1px solid " + C.orange + "40")}>
+                  {translating === "en" ? "⏳ 번역 중..." : "✨ 영어로 자동번역"}
+                </button>
+              )}
+              <input style={inp} placeholder="English translation" value={newEn} onChange={e => setNewEn(e.target.value)} />
+              {newEn.trim() && (
+                <button onClick={() => autoTranslate("ko")} disabled={!!translating} style={mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30")}>
+                  {translating === "ko" ? "⏳ 번역 중..." : "✨ 한국어로 자동번역"}
+                </button>
+              )}
+              {translateError && <div style={{ fontSize: 12, color: C.하, fontFamily: "'Nanum Myeongjo', serif", padding: "8px", background: C.하bg, borderRadius: 8 }}>{translateError}</div>}
+              <button style={mkBtn(C.green, "#fff")} onClick={addSentence} disabled={!newKo.trim() || !newEn.trim()}>+ 추가하기</button>
+            </div>
+          )}
+
+          {/* Bulk text */}
+          {manageTab === "bulk" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <span style={lbl}>📋 여러 문장 한 번에 입력</span>
+              <div style={{ fontSize: 12, color: C.muted, fontFamily: "'Nanum Myeongjo', serif", background: C.bg, borderRadius: 8, padding: "10px 12px", lineHeight: 1.8 }}>
+                한 줄에 하나씩, <strong>한국어 | English</strong> 형식으로 입력하세요.<br />
+                예) 저는 학생이에요. | I am a student.
+              </div>
+              <textarea
+                value={bulkText}
+                onChange={e => setBulkText(e.target.value)}
+                placeholder={"저는 학생이에요. | I am a student.\n오늘 날씨가 좋아요. | The weather is nice today.\n배가 고파요. | I am hungry."}
+                rows={8}
+                style={{ ...inp, resize: "vertical", lineHeight: 1.7 }}
+              />
+              {bulkError && <div style={{ fontSize: 12, color: C.하, background: C.하bg, borderRadius: 8, padding: "8px 12px" }}>{bulkError}</div>}
+              {bulkSuccess && <div style={{ fontSize: 12, color: C.green, background: C.greenLight, borderRadius: 8, padding: "8px 12px" }}>{bulkSuccess}</div>}
+              <button style={mkBtn(C.green, "#fff")} onClick={addBulk} disabled={!bulkText.trim()}>+ 일괄 추가하기</button>
+            </div>
+          )}
+
+          {/* CSV upload */}
+          {manageTab === "csv" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <span style={lbl}>📁 CSV / 엑셀 파일 업로드</span>
+              <div style={{ fontSize: 12, color: C.muted, fontFamily: "'Nanum Myeongjo', serif", background: C.bg, borderRadius: 8, padding: "10px 12px", lineHeight: 1.8 }}>
+                <strong>CSV 또는 엑셀(.csv)</strong> 파일을 업로드하세요.<br />
+                A열: 한국어 &nbsp;|&nbsp; B열: English<br />
+                구분자는 <strong>, (쉼표)</strong> 또는 <strong>| (파이프)</strong> 모두 지원해요.<br />
+                첫 줄이 헤더면 자동으로 건너뛰어요.
+              </div>
+              <label style={{ ...mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30"), cursor: "pointer" }}>
+                📂 파일 선택하기
+                <input type="file" accept=".csv,.txt" onChange={handleCSV} style={{ display: "none" }} />
+              </label>
+              {csvError && <div style={{ fontSize: 12, color: C.하, background: C.하bg, borderRadius: 8, padding: "8px 12px" }}>{csvError}</div>}
+              {csvSuccess && <div style={{ fontSize: 12, color: C.green, background: C.greenLight, borderRadius: 8, padding: "8px 12px" }}>✅ {csvSuccess}</div>}
+            </div>
+          )}
+
+          {/* AI generate */}
+          {manageTab === "ai" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <span style={lbl}>🤖 AI 문장 자동 생성</span>
+              <input style={inp} placeholder="주제 입력 (선택 · 예: 비즈니스, 여행, 일상)" value={genTopic} onChange={e => setGenTopic(e.target.value)} />
+              <div>
+                <div style={{ fontSize: 12, color: C.muted, marginBottom: 8, fontFamily: "'Nanum Myeongjo', serif" }}>생성할 문장 수</div>
+                <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                  {[5, 10, 20].map(n => (
+                    <button key={n} onClick={() => { setGenCount(n); setGenCountCustom(""); }} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1.5px solid " + (genCount === n && !genCountCustom ? C.green : C.border), background: genCount === n && !genCountCustom ? C.greenLight : C.bg, color: genCount === n && !genCountCustom ? C.green : C.muted, fontFamily: "'Nanum Myeongjo', serif", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <input style={{ ...inp, textAlign: "center" }} type="number" placeholder="직접 입력 (최대 50)" value={genCountCustom} onChange={e => setGenCountCustom(e.target.value)} min={1} max={50} />
+              </div>
+              <button style={mkBtn(generating ? C.bg : C.orangeLight, generating ? C.muted : C.orange, "1px solid " + C.orange + "40")} onClick={generateAI} disabled={generating}>
+                {generating ? "⏳ 생성 중..." : "✨ " + (genCountCustom || genCount) + "개 문장 자동 생성"}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Sentence list */}
+        <div style={card}>
+          <span style={lbl}>📚 문장 목록 ({sentences.length}개)</span>
+          {sentences.map(s => (
+            <div key={s.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 0", borderBottom: "1px solid " + C.border }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                  {s.bookmarked && <span style={{ fontSize: 12, color: "#e8a020" }}>★</span>}
+                  {!s.nextReviewDate && <span style={{ fontSize: 10, background: C.orangeLight, color: C.orange, borderRadius: 6, padding: "1px 6px", fontFamily: "'Nanum Myeongjo', serif", fontWeight: 600 }}>새 문장</span>}
+                  {s.nextReviewDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>복습 {s.nextReviewDate}</span>}
+                  {s.reviewCount > 0 && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>🔁{s.reviewCount}</span>}
+                </div>
+                <div style={{ fontFamily: "'Nanum Myeongjo', serif", fontSize: 14, color: C.ink, marginBottom: 2 }}>{s.korean}</div>
+                <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.muted }}>{s.english}</div>
+              </div>
+              <button onClick={() => toggleBookmark(s.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: s.bookmarked ? "#e8a020" : C.border, flexShrink: 0 }}>{s.bookmarked ? "★" : "☆"}</button>
+              <button onClick={() => deleteSentence(s.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#fca5a5", flexShrink: 0 }}>✕</button>
+            </div>
           ))}
         </div>
-        <div style={{ marginTop: 10, fontSize: 12, color: C.muted, fontFamily: "'Nanum Myeongjo', serif", lineHeight: 1.6 }}>
-          현재 큐: 복습 필요 {sentences.filter(s => s.nextReviewDate && s.nextReviewDate <= todayStr()).length}개 · 새 문장 {sentences.filter(s => !s.nextReviewDate).length}개
-        </div>
-      </div>
-
-      {/* Add sentence */}
-      <div style={card}>
-        <span style={lbl}>✏️ 직접 추가</span>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <input style={inp} placeholder="한국어 문장" value={newKo} onChange={e => setNewKo(e.target.value)} />
-          {newKo.trim() && (
-            <button onClick={() => autoTranslate("en")} disabled={!!translating} style={mkBtn(C.orangeLight, C.orange, `1px solid ${C.orange}40`)}>
-              {translating === "en" ? "⏳ 번역 중..." : "✨ 영어로 자동번역"}
-            </button>
-          )}
-          <input style={inp} placeholder="English translation" value={newEn} onChange={e => setNewEn(e.target.value)} />
-          {newEn.trim() && (
-            <button onClick={() => autoTranslate("ko")} disabled={!!translating} style={mkBtn(C.greenLight, C.green, `1px solid ${C.green}30`)}>
-              {translating === "ko" ? "⏳ 번역 중..." : "✨ 한국어로 자동번역"}
-            </button>
-          )}
-          {translateError && <div style={{ fontSize: 12, color: C.하, fontFamily: "'Nanum Myeongjo', serif", padding: "8px", background: C.하bg, borderRadius: 8 }}>{translateError}</div>}
-          <button style={mkBtn(C.green, "#fff")} onClick={addSentence} disabled={!newKo.trim() || !newEn.trim()}>+ 추가하기</button>
-        </div>
-      </div>
-
-      {/* AI generate */}
-      <div style={card}>
-        <span style={lbl}>🤖 AI 자동 생성</span>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <input style={inp} placeholder="주제 입력 (선택 · 예: 비즈니스, 여행)" value={genTopic} onChange={e => setGenTopic(e.target.value)} />
-          <button style={mkBtn(generating ? C.bg : C.orangeLight, generating ? C.muted : C.orange, `1px solid ${C.orange}40`)} onClick={generateAI} disabled={generating}>
-            {generating ? "⏳ 생성 중..." : "✨ 5개 문장 자동 생성"}
-          </button>
-        </div>
-      </div>
-
-      {/* Sentence list */}
-      <div style={card}>
-        <span style={lbl}>📚 문장 목록 ({sentences.length}개)</span>
-        {sentences.map(s => (
-          <div key={s.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 0", borderBottom: `1px solid ${C.border}` }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                {s.bookmarked && <span style={{ fontSize: 12, color: "#e8a020" }}>★</span>}
-                {!s.nextReviewDate && <span style={{ fontSize: 10, background: C.orangeLight, color: C.orange, borderRadius: 6, padding: "1px 6px", fontFamily: "'Nanum Myeongjo', serif", fontWeight: 600 }}>새 문장</span>}
-                {s.nextReviewDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>복습 {s.nextReviewDate}</span>}
-                {s.reviewCount > 0 && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>🔁{s.reviewCount}</span>}
-              </div>
-              <div style={{ fontFamily: "'Nanum Myeongjo', serif", fontSize: 14, color: C.ink, marginBottom: 2 }}>{s.korean}</div>
-              <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.muted }}>{s.english}</div>
-            </div>
-            <button onClick={() => toggleBookmark(s.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: s.bookmarked ? "#e8a020" : C.border, flexShrink: 0 }}>{s.bookmarked ? "★" : "☆"}</button>
-            <button onClick={() => deleteSentence(s.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#fca5a5", flexShrink: 0 }}>✕</button>
-          </div>
-        ))}
-      </div>
-    </>
-  );
+      </>
+    );
+  };
 
   // ── Render ─────────────────────────────────────────────────────────────
   const tabs = [
@@ -641,7 +784,7 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link href={FONTS} rel="stylesheet" />
       <div style={{ minHeight: "100vh", background: C.bg }}>
-        <div style={{ background: C.paper, borderBottom: `1px solid ${C.border}`, padding: "20px 24px 0" }}>
+        <div style={{ background: C.paper, borderBottom: "1px solid " + C.border, padding: "20px 24px 0" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 }}>
             <div style={{ fontFamily: "'Nanum Myeongjo', serif", fontSize: 26, fontWeight: 700, color: C.ink, letterSpacing: "-0.5px" }}>
               Speak<span style={{ color: C.orange }}>Up</span>
@@ -650,14 +793,14 @@ Respond ONLY with valid JSON array (no markdown): [{"korean":"...","english":"..
               {sentences.length}문장 · 🔥{(() => {
                 const sorted = [...studyDates].sort().reverse();
                 let s = 0; let check = todayStr();
-                for (const d of sorted) { if (d === check) { s++; const dt = new Date(check); dt.setDate(dt.getDate() - 1); check = dt.toISOString().slice(0,10); } else if (d < check) break; }
+                for (const d of sorted) { if (d === check) { s++; const dt = new Date(check); dt.setDate(dt.getDate() - 1); check = dt.toISOString().slice(0, 10); } else if (d < check) break; }
                 return s;
               })()}일 연속
             </div>
           </div>
-          <div style={{ display: "flex", borderBottom: `2px solid ${C.border}` }}>
+          <div style={{ display: "flex", borderBottom: "2px solid " + C.border }}>
             {tabs.map(t => (
-              <button key={t.key} onClick={() => setView(t.key)} style={{ flex: 1, padding: "14px 0", border: "none", cursor: "pointer", fontFamily: "'Nanum Myeongjo', serif", fontWeight: 600, fontSize: 14, background: "none", color: view === t.key ? C.green : C.muted, borderBottom: view === t.key ? `3px solid ${C.green}` : "3px solid transparent", marginBottom: -2, transition: "all 0.2s" }}>
+              <button key={t.key} onClick={() => setView(t.key)} style={{ flex: 1, padding: "14px 0", border: "none", cursor: "pointer", fontFamily: "'Nanum Myeongjo', serif", fontWeight: 600, fontSize: 14, background: "none", color: view === t.key ? C.green : C.muted, borderBottom: view === t.key ? "3px solid " + C.green : "3px solid transparent", marginBottom: -2, transition: "all 0.2s" }}>
                 {t.label}
               </button>
             ))}
