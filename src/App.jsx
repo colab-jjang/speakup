@@ -226,7 +226,7 @@ setPhase(“result”);
   const entry = { id: Date.now(), sentenceId: cur.id, korean: cur.korean, english: cur.english, spoken: answer, grade, bestVersion: parsed.bestVersion, feedbackKo: parsed.feedbackKo, correctionKo: parsed.correctionKo, date: new Date().toISOString(), attempt: retryCount + 1 };
   setHistory(h => [entry, ...h]);
 } catch (err) {
-  const msg = err?.message || String(err);
+  const msg = (err && err.message) ? err.message : String(err);
   setEvalResult({ score: 0, grade: "하", feedbackKo: "오류: " + msg, correctionKo: "", bestVersion: cur.english });
   setPhase("result");
 }
@@ -325,7 +325,7 @@ const text = ev.target.result;
 const lines = text.split(”\n”).map(l => l.trim()).filter(l => l);
 const parsed = [];
 const failed = [];
-const startIdx = (lines[0]?.toLowerCase().includes(“korean”) || lines[0]?.toLowerCase().includes(“한국”)) ? 1 : 0;
+const startIdx = (lines[0] && (lines[0].toLowerCase().includes(“korean”) || lines[0].toLowerCase().includes(“한국”))) ? 1 : 0;
 lines.slice(startIdx).forEach((line, i) => {
 const sep = line.includes(”|”) ? “|” : “,”;
 const parts = line.split(sep).map(p => p.trim().replace(/^”|”$/g, “”));
@@ -462,7 +462,7 @@ return (
           <>
             {(phase === "ready" || phase === "listening_ready") && <button style={mkBtn(C.orangeLight, C.orange, "1px solid " + C.orange + "40")} onClick={startListening}><span>🎤</span><span>말하기 시작</span></button>}
             {phase === "processing" && <div style={{ textAlign: "center", color: C.muted, fontSize: 14, padding: "12px 0", fontFamily: "'Nanum Myeongjo', serif" }}>🎙️ 음성 처리 중...</div>}
-            {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => { try { recRef.current?.stop(); } catch(e){} setPhase("processing"); }}><Waveform active /><span>듣는 중... (탭하면 중지)</span></button>}
+            {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => { try { if (recRef.current) recRef.current.stop(); } catch(e){} setPhase("processing"); }}><Waveform active /><span>듣는 중... (탭하면 중지)</span></button>}
           </>
         ) : (
           <>
