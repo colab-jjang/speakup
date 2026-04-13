@@ -5,12 +5,14 @@ const FONTS = “https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@40
 const C = {
 bg: “#f0f4f0”, paper: “#fafcfa”, green: “#2d6a4f”, greenLight: “#d8ead8”,
 orange: “#d4a017”, orangeLight: “#fef9e7”, ink: “#1a2e1a”, muted: “#5a7a5a”,
-border: “#c8dfc8”, 상: “#2d6a4f”, 상bg: “#d8ead8”, 중: “#92400e”,
-중bg: “#fef3c7”, 하: “#991b1b”, 하bg: “#fee2e2”,
+border: “#c8dfc8”,
+high: “#2d6a4f”, highBg: “#d8ead8”,
+mid: “#92400e”, midBg: “#fef3c7”,
+low: “#991b1b”, lowBg: “#fee2e2”,
 };
 
 // ── SRS helpers ────────────────────────────────────────────────────────────
-const SRS_DAYS = { 상: 7, 중: 3, 하: 1 };
+const SRS_DAYS = { high: 7, mid: 3, low: 1 };
 const todayStr = () => new Date().toISOString().slice(0, 10);
 const addDays = (n) => {
 const d = new Date(); d.setDate(d.getDate() + n);
@@ -67,9 +69,9 @@ return “하”;
 // ── Sub-components ─────────────────────────────────────────────────────────
 function GradeBadge({ grade, large }) {
 const size = large ? { fontSize: 20, padding: “7px 20px”, borderRadius: 28 } : { fontSize: 11, padding: “3px 9px”, borderRadius: 16 };
-const bgKey = grade + “bg”;
-const borderColor = C[grade] + “30”;
-return <span style={{ …size, fontWeight: 700, fontFamily: “‘Nanum Myeongjo’, serif”, background: C[bgKey], color: C[grade], border: “1.5px solid “ + borderColor, display: “inline-block” }}>{grade}</span>;
+const bg = grade === “상” ? C.highBg : grade === “중” ? C.midBg : C.lowBg;
+const color = grade === “상” ? C.high : grade === “중” ? C.mid : C.low;
+return <span style={{ …size, fontWeight: 700, fontFamily: “‘Nanum Myeongjo’, serif”, background: bg, color: color, border: “1.5px solid “ + color + “30”, display: “inline-block” }}>{grade}</span>;
 }
 
 function Waveform({ active }) {
@@ -211,7 +213,8 @@ setPhase(“result”);
 
 ```
   // SRS update
-  const nextDate = addDays(SRS_DAYS[grade]);
+  const srsKey = grade === "상" ? "high" : grade === "중" ? "mid" : "low";
+  const nextDate = addDays(SRS_DAYS[srsKey]);
   setSentences(s => s.map(x => x.id === cur.id ? { ...x, reviewCount: x.reviewCount + 1, nextReviewDate: nextDate, lastGrade: grade } : x));
 
   // Record done today
@@ -521,8 +524,8 @@ return (
         {evalResult.correctionKo && (
           <>
             <span style={lbl}>교정 포인트</span>
-            <div style={{ background: C.중bg, borderRadius: 10, padding: "12px 14px", borderLeft: "3px solid " + C.중, marginBottom: 16 }}>
-              <span style={{ fontSize: 13, color: C.중, fontFamily: "'Nanum Myeongjo', serif", lineHeight: 1.6 }}>{evalResult.correctionKo}</span>
+            <div style={{ background: C.midBg, borderRadius: 10, padding: "12px 14px", borderLeft: "3px solid " + C.mid, marginBottom: 16 }}>
+              <span style={{ fontSize: 13, color: C.mid, fontFamily: "'Nanum Myeongjo', serif", lineHeight: 1.6 }}>{evalResult.correctionKo}</span>
             </div>
           </>
         )}
@@ -595,7 +598,7 @@ return (
       </div>
       {["상","중","하"].map((g, i) => (
         <div key={g} style={{ flex: 1, textAlign: "center", padding: "18px 0", borderRight: i < 2 ? "1px solid " + C.border : "none" }}>
-          <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Nanum Myeongjo', serif", color: C[g], marginBottom: 4 }}>{gc[g]}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Nanum Myeongjo', serif", color: g === "상" ? C.high : g === "중" ? C.mid : C.low, marginBottom: 4 }}>{gc[g]}</div>
           <GradeBadge grade={g} />
         </div>
       ))}
@@ -713,7 +716,7 @@ return (
               {translating === "ko" ? "⏳ 번역 중..." : "✨ 한국어로 자동번역"}
             </button>
           )}
-          {translateError && <div style={{ fontSize: 12, color: C.하, fontFamily: "'Nanum Myeongjo', serif", padding: "8px", background: C.하bg, borderRadius: 8 }}>{translateError}</div>}
+          {translateError && <div style={{ fontSize: 12, color: C.low, fontFamily: "'Nanum Myeongjo', serif", padding: "8px", background: C.lowBg, borderRadius: 8 }}>{translateError}</div>}
           <button style={mkBtn(C.green, "#fff")} onClick={addSentence} disabled={!newKo.trim() || !newEn.trim()}>+ 추가하기</button>
         </div>
       )}
@@ -733,7 +736,7 @@ return (
             rows={8}
             style={{ ...inp, resize: "vertical", lineHeight: 1.7 }}
           />
-          {bulkError && <div style={{ fontSize: 12, color: C.하, background: C.하bg, borderRadius: 8, padding: "8px 12px" }}>{bulkError}</div>}
+          {bulkError && <div style={{ fontSize: 12, color: C.low, background: C.lowBg, borderRadius: 8, padding: "8px 12px" }}>{bulkError}</div>}
           {bulkSuccess && <div style={{ fontSize: 12, color: C.green, background: C.greenLight, borderRadius: 8, padding: "8px 12px" }}>{bulkSuccess}</div>}
           <button style={mkBtn(C.green, "#fff")} onClick={addBulk} disabled={!bulkText.trim()}>+ 일괄 추가하기</button>
         </div>
@@ -753,7 +756,7 @@ return (
             📂 파일 선택하기
             <input type="file" accept=".csv,.txt" onChange={handleCSV} style={{ display: "none" }} />
           </label>
-          {csvError && <div style={{ fontSize: 12, color: C.하, background: C.하bg, borderRadius: 8, padding: "8px 12px" }}>{csvError}</div>}
+          {csvError && <div style={{ fontSize: 12, color: C.low, background: C.lowBg, borderRadius: 8, padding: "8px 12px" }}>{csvError}</div>}
           {csvSuccess && <div style={{ fontSize: 12, color: C.green, background: C.greenLight, borderRadius: 8, padding: "8px 12px" }}>✅ {csvSuccess}</div>}
         </div>
       )}
