@@ -899,7 +899,7 @@ const tabs = [
 { key: “history”, label: “기록” },
 { key: “manage”, label: “관리” },
 ];
-
+ 
 return (
 <>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
