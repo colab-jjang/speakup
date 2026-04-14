@@ -2,14 +2,52 @@
 
 const FONTS = "https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap";
 
-const C = {
-  bg: "#f0f4f0", paper: "#fafcfa", green: "#2d6a4f", greenLight: "#d8ead8",
-  orange: "#d4a017", orangeLight: "#fef9e7", ink: "#1a2e1a", muted: "#5a7a5a",
-  border: "#c8dfc8",
-  high: "#2d6a4f", highBg: "#d8ead8",
-  mid: "#92400e", midBg: "#fef3c7",
-  low: "#991b1b", lowBg: "#fee2e2",
+const THEMES = {
+  sage: {
+    name: "🌿 세이지 그린",
+    bg: "#f0f4f0", paper: "#fafcfa", green: "#2d6a4f", greenLight: "#d8ead8",
+    orange: "#d4a017", orangeLight: "#fef9e7", ink: "#1a2e1a", muted: "#5a7a5a",
+    border: "#c8dfc8", high: "#2d6a4f", highBg: "#d8ead8",
+    mid: "#92400e", midBg: "#fef3c7", low: "#991b1b", lowBg: "#fee2e2",
+  },
+  cream: {
+    name: "🌾 크림",
+    bg: "#f5f0e8", paper: "#fffdf9", green: "#1b4332", greenLight: "#e9f5ee",
+    orange: "#c84b0f", orangeLight: "#fdf0ea", ink: "#1a1a1a", muted: "#7a7060",
+    border: "#e2ddd4", high: "#1b4332", highBg: "#e9f5ee",
+    mid: "#92400e", midBg: "#fef3c7", low: "#991b1b", lowBg: "#fee2e2",
+  },
+  darkGreen: {
+    name: "🌙 다크 그린",
+    bg: "#0d1f17", paper: "#142b1f", green: "#4ade80", greenLight: "#14532d",
+    orange: "#fb923c", orangeLight: "#431407", ink: "#f0fdf4", muted: "#86efac",
+    border: "#1e3a2b", high: "#4ade80", highBg: "#14532d",
+    mid: "#fbbf24", midBg: "#451a03", low: "#f87171", lowBg: "#450a0a",
+  },
+  navy: {
+    name: "🌊 네이비 블루",
+    bg: "#0f172a", paper: "#1e293b", green: "#38bdf8", greenLight: "#0c4a6e",
+    orange: "#f472b6", orangeLight: "#500724", ink: "#f8fafc", muted: "#94a3b8",
+    border: "#334155", high: "#38bdf8", highBg: "#0c4a6e",
+    mid: "#fbbf24", midBg: "#451a03", low: "#f87171", lowBg: "#450a0a",
+  },
+  pink: {
+    name: "🌸 소프트 핑크",
+    bg: "#fff1f5", paper: "#ffffff", green: "#be185d", greenLight: "#fce7f3",
+    orange: "#f59e0b", orangeLight: "#fef3c7", ink: "#1f0010", muted: "#9d4b72",
+    border: "#fecdd3", high: "#be185d", highBg: "#fce7f3",
+    mid: "#92400e", midBg: "#fef3c7", low: "#991b1b", lowBg: "#fee2e2",
+  },
+  mono: {
+    name: "🪨 모노크롬",
+    bg: "#f4f4f4", paper: "#ffffff", green: "#111111", greenLight: "#e5e5e5",
+    orange: "#555555", orangeLight: "#f5f5f5", ink: "#111111", muted: "#888888",
+    border: "#dddddd", high: "#111111", highBg: "#e5e5e5",
+    mid: "#555555", midBg: "#f5f5f5", low: "#991b1b", lowBg: "#fee2e2",
+  },
 };
+
+let C = THEMES.sage;
 
 // ── SRS helpers ────────────────────────────────────────────────────────────
 const SRS_DAYS = { high: 7, mid: 3, low: 1 };
@@ -87,6 +125,8 @@ function Waveform({ active }) {
 
 // ── Main App ───────────────────────────────────────────────────────────────
 export default function App() {
+  const [themeKey, setThemeKey] = useState(() => load("su_theme", "sage"));
+  C = THEMES[themeKey] || THEMES.sage;
   const [view, setView] = useState("practice");
   const [sentences, setSentences] = useState(() => load("su_sentences", INITIAL_SENTENCES));
   const [dailyGoal, setDailyGoal] = useState(() => load("su_goal", 5));
@@ -124,8 +164,9 @@ export default function App() {
   const [csvSuccess, setCsvSuccess] = useState("");
   const [manageTab, setManageTab] = useState("single");
   const [searchText, setSearchText] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all"); // all | new | due | done
+  const [filterStatus, setFilterStatus] = useState("all");
   const [expandedIds, setExpandedIds] = useState({});
+  const [listPage, setListPage] = useState(0);
   const toggleExpand = (id) => setExpandedIds(p => ({ ...p, [id]: !p[id] }));
 
   const recRef = useRef(null);
@@ -136,6 +177,7 @@ export default function App() {
 
   // ── Persist on change ──
   useEffect(() => { save("su_sentences", sentences); }, [sentences]);
+  useEffect(() => { save("su_theme", themeKey); }, [themeKey]);
   useEffect(() => { save("su_goal", dailyGoal); }, [dailyGoal]);
   useEffect(() => { save("su_dates", studyDates); }, [studyDates]);
   useEffect(() => { save("su_history", history.slice(0, 200)); }, [history]);
@@ -774,7 +816,7 @@ export default function App() {
           )}
         </div>
 
-        {/* Sentence list */}
+        {/* Sentence list - 아래로 이동 */}
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <span style={lbl}>📚 문장 목록 ({sentences.length}개)</span>
@@ -785,7 +827,7 @@ export default function App() {
             style={{ ...inp, marginBottom: 10 }}
             placeholder="🔍 검색..."
             value={searchText}
-            onChange={e => setSearchText(e.target.value)}
+            onChange={e => { setSearchText(e.target.value); setListPage(0); }}
           />
 
           {/* Filter tabs */}
@@ -797,14 +839,15 @@ export default function App() {
               { key: "done", label: "학습 완료" },
               { key: "bookmarked", label: "★ 즐겨찾기" },
             ].map(f => (
-              <button key={f.key} onClick={() => setFilterStatus(f.key)} style={{ padding: "5px 12px", borderRadius: 20, border: "1.5px solid " + (filterStatus === f.key ? C.green : C.border), background: filterStatus === f.key ? C.greenLight : C.bg, color: filterStatus === f.key ? C.green : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+              <button key={f.key} onClick={() => { setFilterStatus(f.key); setListPage(0); }} style={{ padding: "5px 12px", borderRadius: 20, border: "1.5px solid " + (filterStatus === f.key ? C.green : C.border), background: filterStatus === f.key ? C.greenLight : C.bg, color: filterStatus === f.key ? C.green : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                 {f.label}
               </button>
             ))}
           </div>
 
-          {/* Grouped list */}
+          {/* Grouped + Paginated list */}
           {(() => {
+            const PAGE_SIZE = 10;
             const today = todayStr();
             const filtered = sentences.filter(s => {
               const matchSearch = !searchText || s.korean.includes(searchText) || s.english.toLowerCase().includes(searchText.toLowerCase());
@@ -823,59 +866,90 @@ export default function App() {
               </div>
             );
 
+            const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+            const paged = filtered.slice(listPage * PAGE_SIZE, (listPage + 1) * PAGE_SIZE);
+
             const groups = filterStatus === "all" ? [
-              { label: "새 문장", items: filtered.filter(s => !s.nextReviewDate), color: C.orange, bg: C.orangeLight },
-              { label: "복습 예정", items: filtered.filter(s => s.nextReviewDate && s.nextReviewDate <= today), color: "#991b1b", bg: "#fee2e2" },
-              { label: "학습 완료", items: filtered.filter(s => s.nextReviewDate && s.nextReviewDate > today), color: C.green, bg: C.greenLight },
-            ] : [{ label: null, items: filtered }];
+              { label: "새 문장", items: paged.filter(s => !s.nextReviewDate), color: C.orange, bg: C.orangeLight },
+              { label: "복습 예정", items: paged.filter(s => s.nextReviewDate && s.nextReviewDate <= today), color: C.low, bg: C.lowBg },
+              { label: "학습 완료", items: paged.filter(s => s.nextReviewDate && s.nextReviewDate > today), color: C.green, bg: C.greenLight },
+            ] : [{ label: null, items: paged }];
 
-            return groups.map(group => (
-              group.items.length === 0 ? null :
-              <div key={group.label || "all"} style={{ marginBottom: 14 }}>
-                {group.label && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, background: group.bg, color: group.color, borderRadius: 8, padding: "2px 10px", fontFamily: "'Nanum Gothic', sans-serif" }}>{group.label}</span>
-                    <span style={{ fontSize: 11, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>{group.items.length}개</span>
-                  </div>
-                )}
-                {group.items.map((s, i) => (
-                  <div key={s.id} style={{ borderRadius: 12, border: "1px solid " + C.border, marginBottom: 6, overflow: "hidden", background: C.paper }}>
-                    {/* Row header - always visible */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", cursor: "pointer" }} onClick={() => toggleExpand(s.id)}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14, fontWeight: 700, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.korean}</div>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-                        {s.bookmarked && <span style={{ fontSize: 13, color: "#e8a020" }}>★</span>}
-                        {s.lastGrade && <GradeBadge grade={s.lastGrade} />}
-                        <span style={{ fontSize: 13, color: C.muted }}>{expandedIds[s.id] ? "▲" : "▼"}</span>
-                      </div>
-                    </div>
-
-                    {/* Expanded details */}
-                    {expandedIds[s.id] && (
-                      <div style={{ padding: "0 14px 14px", borderTop: "1px solid " + C.border }}>
-                        <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.green, marginTop: 10, marginBottom: 8 }}>{s.english}</div>
-                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
-                          {s.addedDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>📅 등록 {s.addedDate}</span>}
-                          {s.nextReviewDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>🔄 복습 {s.nextReviewDate}</span>}
-                          {s.reviewCount > 0 && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>🔁 {s.reviewCount}회</span>}
-                        </div>
-                        <div style={{ display: "flex", gap: 8 }}>
-                          <button onClick={() => toggleBookmark(s.id)} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "1px solid " + C.border, background: s.bookmarked ? "#fef9e7" : C.bg, color: s.bookmarked ? "#e8a020" : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                            {s.bookmarked ? "★ 즐겨찾기 해제" : "☆ 즐겨찾기"}
-                          </button>
-                          <button onClick={() => deleteSentence(s.id)} style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid #fca5a5", background: "#fff5f5", color: "#991b1b", fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                            삭제
-                          </button>
-                        </div>
+            return (
+              <>
+                {groups.map(group => (
+                  group.items.length === 0 ? null :
+                  <div key={group.label || "all"} style={{ marginBottom: 14 }}>
+                    {group.label && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, background: group.bg, color: group.color, borderRadius: 8, padding: "2px 10px", fontFamily: "'Nanum Gothic', sans-serif" }}>{group.label}</span>
+                        <span style={{ fontSize: 11, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>{group.items.length}개</span>
                       </div>
                     )}
+                    {group.items.map(s => (
+                      <div key={s.id} style={{ borderRadius: 12, border: "1px solid " + C.border, marginBottom: 6, overflow: "hidden", background: C.paper }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", cursor: "pointer" }} onClick={() => toggleExpand(s.id)}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14, fontWeight: 700, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.korean}</div>
+                            {s.addedDate && <div style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'", marginTop: 2 }}>📅 {s.addedDate} 등록</div>}
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                            {s.bookmarked && <span style={{ fontSize: 13, color: "#e8a020" }}>★</span>}
+                            {s.lastGrade && <GradeBadge grade={s.lastGrade} />}
+                            <span style={{ fontSize: 13, color: C.muted }}>{expandedIds[s.id] ? "▲" : "▼"}</span>
+                          </div>
+                        </div>
+                        {expandedIds[s.id] && (
+                          <div style={{ padding: "0 14px 14px", borderTop: "1px solid " + C.border }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.green, marginTop: 10, marginBottom: 8 }}>{s.english}</div>
+                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
+                              {s.nextReviewDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>🔄 복습 {s.nextReviewDate}</span>}
+                              {s.reviewCount > 0 && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>🔁 {s.reviewCount}회</span>}
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <button onClick={() => toggleBookmark(s.id)} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "1px solid " + C.border, background: s.bookmarked ? "#fef9e7" : C.bg, color: s.bookmarked ? "#e8a020" : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                {s.bookmarked ? "★ 즐겨찾기 해제" : "☆ 즐겨찾기"}
+                              </button>
+                              <button onClick={() => deleteSentence(s.id)} style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid #fca5a5", background: "#fff5f5", color: "#991b1b", fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                삭제
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 ))}
-              </div>
-            ));
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 8 }}>
+                    <button onClick={() => setListPage(p => Math.max(0, p - 1))} disabled={listPage === 0} style={{ padding: "8px 16px", borderRadius: 10, border: "1px solid " + C.border, background: listPage === 0 ? C.bg : C.paper, color: listPage === 0 ? C.muted : C.ink, cursor: listPage === 0 ? "default" : "pointer", opacity: listPage === 0 ? 0.4 : 1, fontFamily: "'Nanum Gothic', sans-serif", fontWeight: 700 }}>←</button>
+                    <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.muted }}>{listPage + 1} / {totalPages}</span>
+                    <button onClick={() => setListPage(p => Math.min(totalPages - 1, p + 1))} disabled={listPage === totalPages - 1} style={{ padding: "8px 16px", borderRadius: 10, border: "1px solid " + C.border, background: listPage === totalPages - 1 ? C.bg : C.paper, color: listPage === totalPages - 1 ? C.muted : C.ink, cursor: listPage === totalPages - 1 ? "default" : "pointer", opacity: listPage === totalPages - 1 ? 0.4 : 1, fontFamily: "'Nanum Gothic', sans-serif", fontWeight: 700 }}>→</button>
+                  </div>
+                )}
+              </>
+            );
           })()}
+        </div>
+
+        {/* Theme selector - 맨 아래 */}
+        <div style={card}>
+          <span style={lbl}>🎨 테마 선택</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {Object.entries(THEMES).map(([key, theme]) => (
+              <button key={key} onClick={() => setThemeKey(key)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 12, border: "1.5px solid " + (themeKey === key ? C.green : C.border), background: themeKey === key ? C.greenLight : C.bg, cursor: "pointer", textAlign: "left" }}>
+                <div style={{ display: "flex", gap: 5 }}>
+                  {[theme.bg, theme.paper, theme.green, theme.orange, theme.ink].map((col, i) => (
+                    <div key={i} style={{ width: 16, height: 16, borderRadius: "50%", background: col, border: "1px solid " + theme.border }} />
+                  ))}
+                </div>
+                <span style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14, fontWeight: 700, color: themeKey === key ? C.green : C.ink }}>{theme.name}</span>
+                {themeKey === key && <span style={{ marginLeft: "auto", fontSize: 12, color: C.green }}>✓ 적용중</span>}
+              </button>
+            ))}
+          </div>
         </div>
       </>
     );
