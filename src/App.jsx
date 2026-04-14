@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+ï»¿import { useState, useRef, useCallback, useEffect } from "react";
 
 const FONTS = "https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap";
 
@@ -11,7 +11,7 @@ const C = {
   low: "#991b1b", lowBg: "#fee2e2",
 };
 
-// ?€?€ SRS helpers ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// ?Â€?Â€ SRS helpers ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
 const SRS_DAYS = { high: 7, mid: 3, low: 1 };
 const todayStr = () => new Date().toISOString().slice(0, 10);
 const addDays = (n) => {
@@ -36,19 +36,19 @@ function buildQueue(sentences, goal) {
   return combined.slice(0, goal);
 }
 
-// ?€?€ Persist helpers ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// ?Â€?Â€ Persist helpers ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
 const load = (key, fallback) => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; } };
 const save = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} };
 
-// ?€?€ Initial data ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// ?Â€?Â€ Initial data ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
 const INITIAL_SENTENCES = [
-  { id: 1, korean: "?€??ë§¤ì¼ ?„ì¹¨ ?¼ì° ?¼ì–´?˜ìš”.", english: "I wake up early every morning.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
-  { id: 2, korean: "?¤ëŠ˜ ?Œì˜ê°€ ???œì— ?ˆì–´??", english: "I have a meeting at three o'clock today.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
-  { id: 3, korean: "???„ë¡œ?íŠ¸???¤ìŒ ?¬ê¹Œì§€ ?„ë£Œ?´ì•¼ ?´ìš”.", english: "This project needs to be completed by next month.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
-  { id: 4, korean: "? ì”¨ê°€ ì¢‹ìœ¼ë©?ê³µì›???°ì±…?˜ëŸ¬ ê°ˆê²Œ??", english: "If the weather is nice, I'll go for a walk in the park.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
+  { id: 1, korean: "?Â€??ï§ã…¼ì”ª ?ê¾©ë¬  ?ì‡±ì»¢ ?ì‡±ë¼±?ì„ìŠ‚.", english: "I wake up early every morning.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
+  { id: 2, korean: "?ã…»ë’› ?ëš¯ì“½åª›Â€ ???ì’–ë¿‰ ?ë‰ë¼±??", english: "I have a meeting at three o'clock today.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
+  { id: 3, korean: "???ê¾¨ì¤ˆ?ì•ºë“ƒ???ã…¼ì“¬ ?Ñˆí‰´ï§Â€ ?ê¾¨ì¦º?ëŒë¹ ?ëŒìŠ‚.", english: "This project needs to be completed by next month.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
+  { id: 4, korean: "?ì¢ëµªåª›Â€ é†«ë—­ì‘ï§?æ€¨ë“­ì???ê³—ì½‰?ì„ìœ­ åª›ë‡ì¾¶??", english: "If the weather is nice, I'll go for a walk in the park.", bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: "2026-01-01" },
 ];
 
-// ?€?€ API ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// ?Â€?Â€ API ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
 async function callClaude(messages, system) {
   const res = await fetch("/api/evaluate", {
     method: "POST",
@@ -62,15 +62,15 @@ async function callClaude(messages, system) {
 
 function getGrade(score) {
   if (score >= 75) return "??;
-  if (score >= 45) return "ì¤?;
+  if (score >= 45) return "ä»¥?;
   return "??;
 }
 
-// ?€?€ Sub-components ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// ?Â€?Â€ Sub-components ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
 function GradeBadge({ grade, large }) {
   const size = large ? { fontSize: 20, padding: "7px 20px", borderRadius: 28 } : { fontSize: 11, padding: "3px 9px", borderRadius: 16 };
-  const bg = grade === "?? ? C.highBg : grade === "ì¤? ? C.midBg : C.lowBg;
-  const color = grade === "?? ? C.high : grade === "ì¤? ? C.mid : C.low;
+  const bg = grade === "?? ? C.highBg : grade === "ä»¥? ? C.midBg : C.lowBg;
+  const color = grade === "?? ? C.high : grade === "ä»¥? ? C.mid : C.low;
   return <span style={{ ...size, fontWeight: 700, fontFamily: "'Nanum Gothic', sans-serif", background: bg, color: color, border: "1.5px solid " + color + "30", display: "inline-block" }}>{grade}</span>;
 }
 
@@ -85,12 +85,12 @@ function Waveform({ active }) {
   );
 }
 
-// ?€?€ Main App ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// ?Â€?Â€ Main App ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
 export default function App() {
   const [view, setView] = useState("practice");
   const [sentences, setSentences] = useState(() => load("su_sentences", INITIAL_SENTENCES));
   const [dailyGoal, setDailyGoal] = useState(() => load("su_goal", 5));
-  const [extraGoal, setExtraGoal] = useState(0); // ì¶”ê? ?°ìŠµ ëª©í‘œ
+  const [extraGoal, setExtraGoal] = useState(0); // ç•°ë¶½? ?ê³—ë’¿ ï§â‘ºëª´
   const [studyDates, setStudyDates] = useState(() => load("su_dates", [])); // ["YYYY-MM-DD", ...]
   const [history, setHistory] = useState(() => load("su_history", []));
   const [calMonth, setCalMonth] = useState(() => { const d = new Date(); return { y: d.getFullYear(), m: d.getMonth() }; });
@@ -134,14 +134,14 @@ export default function App() {
   const doEvalRef = useRef(null);
   const currentRef = useRef(null);
 
-  // ?€?€ Persist on change ?€?€
+  // ?Â€?Â€ Persist on change ?Â€?Â€
   useEffect(() => { save("su_sentences", sentences); }, [sentences]);
   useEffect(() => { save("su_goal", dailyGoal); }, [dailyGoal]);
   useEffect(() => { save("su_dates", studyDates); }, [studyDates]);
   useEffect(() => { save("su_history", history.slice(0, 200)); }, [history]);
   useEffect(() => { save("su_done_today", { date: todayStr(), ids: doneToday }); }, [doneToday]);
 
-  // ?€?€ Queue ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Queue ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   useEffect(() => {
     const q = buildQueue(sentences, dailyGoal);
     setQueueIds(q.map(s => s.id));
@@ -160,7 +160,7 @@ export default function App() {
   const totalGoal = dailyGoal + extraGoal;
   const allDone = todayDone >= totalGoal;
 
-  // ?€?€ Speech ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Speech ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const speakKorean = useCallback(() => {
     if (!current) return;
     window.speechSynthesis.cancel();
@@ -173,7 +173,7 @@ export default function App() {
 
   const startListening = useCallback(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { alert("Chrome?ì„œë§??Œì„±?¸ì‹??ê°€?¥í•´??"); return; }
+    if (!SR) { alert("Chrome?ë¨¯ê½Œï§??ëš¯ê½¦?ëª„ë–‡??åª›Â€?Î½ë¹??"); return; }
     const rec = new SR();
     rec.lang = "en-US"; rec.continuous = false; rec.interimResults = false;
     transcriptRef.current = ""; evaluatedRef.current = false;
@@ -197,7 +197,7 @@ export default function App() {
     await doEvalRef.current(ans);
   };
 
-  // ?€?€ Evaluate ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Evaluate ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const doEval = async (answer) => {
     const cur = currentRef.current;
     if (!cur) return;
@@ -212,7 +212,7 @@ export default function App() {
       setPhase("result");
 
       // SRS update
-      const srsKey = grade === "?? ? "high" : grade === "ì¤? ? "mid" : "low";
+      const srsKey = grade === "?? ? "high" : grade === "ä»¥? ? "mid" : "low";
       const nextDate = addDays(SRS_DAYS[srsKey]);
       setSentences(s => s.map(x => x.id === cur.id ? { ...x, reviewCount: x.reviewCount + 1, nextReviewDate: nextDate, lastGrade: grade } : x));
 
@@ -229,13 +229,13 @@ export default function App() {
       setHistory(h => [entry, ...h]);
     } catch (err) {
       const msg = (err && err.message) ? err.message : String(err);
-      setEvalResult({ score: 0, grade: "??, feedbackKo: "?¤ë¥˜: " + msg, correctionKo: "", bestVersion: cur.english });
+      setEvalResult({ score: 0, grade: "??, feedbackKo: "?ã…»ìªŸ: " + msg, correctionKo: "", bestVersion: cur.english });
       setPhase("result");
     }
   };
   doEvalRef.current = doEval;
 
-  // ?€?€ Helpers ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Helpers ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const reset = () => { window.speechSynthesis.cancel(); setPhase("ready"); setSpokenText(""); setTypedText(""); setEvalResult(null); setRetryCount(0); };
   const retry = () => { setRetryCount(r => r + 1); setPhase("ready"); setSpokenText(""); setTypedText(""); setEvalResult(null); };
   const goNext = () => { if (qIdx < queue.length - 1) { setQIdx(i => i + 1); reset(); } };
@@ -249,7 +249,7 @@ export default function App() {
     setQIdx(0); reset();
   };
 
-  // ?€?€ Auto-translate ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Auto-translate ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const [translateError, setTranslateError] = useState("");
   const autoTranslate = async (dir) => {
     const text = dir === "ko" ? newEn : newKo;
@@ -266,7 +266,7 @@ export default function App() {
       if (dir === "ko") setNewKo(raw.trim());
       else setNewEn(raw.trim());
     } catch (err) {
-      setTranslateError("ë²ˆì—­ ?¤ë¥˜: " + (err && err.message ? err.message : String(err)));
+      setTranslateError("è¸°ë‰ë¿­ ?ã…»ìªŸ: " + (err && err.message ? err.message : String(err)));
     }
     setTranslating(null);
   };
@@ -279,21 +279,21 @@ export default function App() {
 
   const generateAI = async () => {
     const count = genCountCustom ? parseInt(genCountCustom) : genCount;
-    if (!count || count < 1 || count > 50) { alert("1~50 ?¬ì´???«ìë¥??…ë ¥?´ì£¼?¸ìš”."); return; }
+    if (!count || count < 1 || count > 50) { alert("1~50 ?ÑŠì” ???ãƒ¬ì˜„ç‘œ??ë‚…ì °?ëŒï¼œ?ëª„ìŠ‚."); return; }
     setGenerating(true);
     try {
       const raw = await callClaude(
-        [{ role: "user", content: genTopic || "?¤ì–‘???¼ìƒ ì£¼ì œ" }],
+        [{ role: "user", content: genTopic || "?ã…¼ë¼‡???ì‡±ê¸½ äºŒì‡±ì £" }],
         "Generate exactly " + count + " Korean-English sentence pairs for translation practice. Vary difficulty levels.\nRespond ONLY with valid JSON array (no markdown): [{\"korean\":\"...\",\"english\":\"...\"},...]"
       );
       const arr = JSON.parse(raw.replace(/```json|```/g, "").trim());
       setSentences(p => [...p, ...arr.map((s, i) => ({ id: Date.now() + i, ...s, bookmarked: false, reviewCount: 0, nextReviewDate: null, lastGrade: null, addedDate: todayStr() }))]);
       setGenTopic(""); setGenCountCustom("");
-    } catch (err) { alert("?ì„± ?¤ë¥˜: " + (err && err.message ? err.message : "")); }
+    } catch (err) { alert("?ì•¹ê½¦ ?ã…»ìªŸ: " + (err && err.message ? err.message : "")); }
     setGenerating(false);
   };
 
-  // ?¼ê´„ ?ìŠ¤???…ë ¥ (?œêµ­??| ?ì–´ ?•ì‹)
+  // ?ì‡¨íµ ?ë¿ë’ª???ë‚…ì ° (?ì’“ë…??| ?ê³¸ë¼± ?ëº¤ë–‡)
   const addBulk = () => {
     setBulkError(""); setBulkSuccess("");
     const lines = bulkText.split("\n").map(l => l.trim()).filter(l => l);
@@ -307,14 +307,14 @@ export default function App() {
         failed.push(i + 1);
       }
     });
-    if (parsed.length === 0) { setBulkError("?¬ë°”ë¥??•ì‹???†ì–´?? '?œêµ­??| English' ?•ì‹?¼ë¡œ ?…ë ¥?´ì£¼?¸ìš”."); return; }
+    if (parsed.length === 0) { setBulkError("?Ñ‰ì»®ç‘œ??ëº¤ë–‡???ë†ë¼±?? '?ì’“ë…??| English' ?ëº¤ë–‡?ì‡°ì¤ˆ ?ë‚…ì °?ëŒï¼œ?ëª„ìŠ‚."); return; }
     setSentences(p => [...p, ...parsed]);
     setBulkText("");
-    setBulkSuccess(parsed.length + "ê°?ì¶”ê??ì–´??" + (failed.length > 0 ? " (" + failed.join(", ") + "ë²?ì¤??¤ë¥˜)" : ""));
+    setBulkSuccess(parsed.length + "åª›?ç•°ë¶½??ë¨¯ë¼±??" + (failed.length > 0 ? " (" + failed.join(", ") + "è¸°?ä»¥??ã…»ìªŸ)" : ""));
     setTimeout(() => setBulkSuccess(""), 3000);
   };
 
-  // CSV/?‘ì? ?Œì¼ ?…ë¡œ??
+  // CSV/?ë¬’? ?ëš¯ì”ª ?ë‚…ì¤ˆ??
   const handleCSV = (e) => {
     setCsvError(""); setCsvSuccess("");
     const file = e.target.files[0];
@@ -325,7 +325,7 @@ export default function App() {
       const lines = text.split("\n").map(l => l.trim()).filter(l => l);
       const parsed = [];
       const failed = [];
-      const startIdx = (lines[0] && (lines[0].toLowerCase().includes("korean") || lines[0].toLowerCase().includes("?œêµ­"))) ? 1 : 0;
+      const startIdx = (lines[0] && (lines[0].toLowerCase().includes("korean") || lines[0].toLowerCase().includes("?ì’“ë…"))) ? 1 : 0;
       lines.slice(startIdx).forEach((line, i) => {
         const sep = line.includes("|") ? "|" : ",";
         const parts = line.split(sep).map(p => p.trim().replace(/^"|"$/g, ""));
@@ -335,16 +335,16 @@ export default function App() {
           failed.push(startIdx + i + 1);
         }
       });
-      if (parsed.length === 0) { setCsvError("?Œì¼?ì„œ ë¬¸ì¥??ì°¾ì? ëª»í–ˆ?´ìš”. ?•ì‹???•ì¸?´ì£¼?¸ìš”."); return; }
+      if (parsed.length === 0) { setCsvError("?ëš¯ì”ª?ë¨¯ê½Œ è‡¾ëª„ì˜£??ï§¡ì– ? ï§ì‚µë»½?ëŒìŠ‚. ?ëº¤ë–‡???ëº¤ì”¤?ëŒï¼œ?ëª„ìŠ‚."); return; }
       setSentences(p => [...p, ...parsed]);
-      setCsvSuccess(parsed.length + "ê°?ì¶”ê??ì–´??" + (failed.length > 0 ? " (" + failed.join(", ") + "ë²?ì¤??¤ë¥˜)" : ""));
+      setCsvSuccess(parsed.length + "åª›?ç•°ë¶½??ë¨¯ë¼±??" + (failed.length > 0 ? " (" + failed.join(", ") + "è¸°?ä»¥??ã…»ìªŸ)" : ""));
       setTimeout(() => setCsvSuccess(""), 3000);
     };
     reader.readAsText(file, "UTF-8");
     e.target.value = "";
   };
 
-  // ?€?€ Shared styles ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Shared styles ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const card = { background: C.paper, borderRadius: 16, border: "1px solid " + C.border, padding: "20px", marginBottom: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" };
   const mkBtn = (bg, color, border) => ({ width: "100%", padding: "14px", borderRadius: 12, border: border || "none", background: bg, color, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 });
   const inp = { width: "100%", padding: "12px 14px", borderRadius: 10, boxSizing: "border-box", border: "1.5px solid " + C.border, background: C.bg, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14, color: C.ink, outline: "none" };
@@ -360,24 +360,24 @@ export default function App() {
     touchStartX.current = null;
   };
 
-  // ?€?€ Practice View ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Practice View ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const PracticeView = () => {
     // All done today
     if (allDone) return (
       <div style={{ textAlign: "center", padding: "50px 0" }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>?‰</div>
-        <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 22, fontWeight: 700, color: C.ink, marginBottom: 8 }}>?¤ëŠ˜ ëª©í‘œ ?„ë£Œ!</div>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>?ëŸ¦</div>
+        <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 22, fontWeight: 700, color: C.ink, marginBottom: 8 }}>?ã…»ë’› ï§â‘ºëª´ ?ê¾¨ì¦º!</div>
         <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 24 }}>
-          {totalGoal}ê°?ë¬¸ì¥??ëª¨ë‘ ?€?ˆì–´?? ?˜ê³ ?ˆì–´???˜Š
+          {totalGoal}åª›?è‡¾ëª„ì˜£??ï§â‘¤ëª¢ ?Â€?ë‰ë¼±?? ?ì„í€¬?ë‰ë¼±???ì‚ƒ
         </div>
         <div style={{ ...card, textAlign: "left", marginBottom: 14 }}>
-          <span style={lbl}>?¤ëŠ˜ ê²°ê³¼</span>
-          {["??,"ì¤?,"??].map(g => {
+          <span style={lbl}>?ã…»ë’› å¯ƒê³Œë‚µ</span>
+          {["??,"ä»¥?,"??].map(g => {
             const cnt = history.filter(h => h.date.slice(0,10) === todayStr() && h.grade === g).length;
             return cnt > 0 ? (
               <div key={g} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid " + C.border }}>
                 <GradeBadge grade={g} />
-                <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, color: C.muted }}>{cnt}ê°?/span>
+                <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, color: C.muted }}>{cnt}åª›?/span>
               </div>
             ) : null;
           })}
@@ -385,9 +385,9 @@ export default function App() {
 
         {/* Extra practice */}
         <div style={{ ...card, textAlign: "left" }}>
-          <span style={lbl}>??ì¶”ê? ?°ìŠµ</span>
+          <span style={lbl}>??ç•°ë¶½? ?ê³—ë’¿</span>
           <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 13, color: C.muted, marginBottom: 12 }}>
-            ???°ìŠµ?˜ê³  ?¶ìœ¼ë©?ì¶”ê? ë¬¸ì¥ ?˜ë? ? íƒ?˜ì„¸??
+            ???ê³—ë’¿?ì„í€¬ ?ë ì‘ï§?ç•°ë¶½? è‡¾ëª„ì˜£ ?ì„? ?ì¢ê¹®?ì„ê½­??
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {[5, 10, 15, 20].map(n => (
@@ -407,9 +407,9 @@ export default function App() {
 
     if (!current) return (
       <div style={{ textAlign: "center", padding: "60px 0", color: C.muted }}>
-        <div style={{ fontSize: 36, marginBottom: 10 }}>?“­</div>
-        <div style={{ fontFamily: "'Nanum Gothic', sans-serif", marginBottom: 16 }}>?¤ëŠ˜ ?€ ë¬¸ì¥???†ì–´??</div>
-        <button style={{ ...mkBtn(C.green, "#fff"), width: "auto", padding: "12px 24px" }} onClick={refreshQueue}>???ˆë¡œê³ ì¹¨</button>
+        <div style={{ fontSize: 36, marginBottom: 10 }}>?ë²Š</div>
+        <div style={{ fontFamily: "'Nanum Gothic', sans-serif", marginBottom: 16 }}>?ã…»ë’› ?Â€ è‡¾ëª„ì˜£???ë†ë¼±??</div>
+        <button style={{ ...mkBtn(C.green, "#fff"), width: "auto", padding: "12px 24px" }} onClick={refreshQueue}>???ëˆì¤ˆæ€¨ì¢ë¬ </button>
       </div>
     );
 
@@ -418,16 +418,16 @@ export default function App() {
         {/* Progress */}
         <div style={{ ...card, padding: "14px 18px", marginBottom: 14 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 13, fontWeight: 600, color: C.ink }}>?¤ëŠ˜ ì§„í–‰</span>
-            <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.muted }}>{todayDone} / {totalGoal}ê°?/span>
+            <span style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 13, fontWeight: 600, color: C.ink }}>?ã…»ë’› ï§ê¾ªë»¾</span>
+            <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.muted }}>{todayDone} / {totalGoal}åª›?/span>
           </div>
           <div style={{ height: 6, background: C.border, borderRadius: 3, overflow: "hidden" }}>
             <div style={{ height: "100%", width: Math.min(100, (todayDone / totalGoal) * 100) + "%", background: C.green, borderRadius: 3, transition: "width 0.4s ease" }} />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-            <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 10, color: C.muted }}>{qIdx + 1} / {queue.length} ë²ˆì§¸ ë¬¸ì¥</span>
-            {current.nextReviewDate === null && <span style={{ fontSize: 10, background: C.orangeLight, color: C.orange, borderRadius: 8, padding: "2px 8px", fontFamily: "'Nanum Gothic', sans-serif", fontWeight: 600 }}>??ë¬¸ì¥</span>}
-            {current.lastGrade && <span style={{ fontSize: 10, fontFamily: "'IBM Plex Mono'", color: C.muted }}>?´ì „: <GradeBadge grade={current.lastGrade} /></span>}
+            <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 10, color: C.muted }}>{qIdx + 1} / {queue.length} è¸°ë‰ã è‡¾ëª„ì˜£</span>
+            {current.nextReviewDate === null && <span style={{ fontSize: 10, background: C.orangeLight, color: C.orange, borderRadius: 8, padding: "2px 8px", fontFamily: "'Nanum Gothic', sans-serif", fontWeight: 600 }}>??è‡¾ëª„ì˜£</span>}
+            {current.lastGrade && <span style={{ fontSize: 10, fontFamily: "'IBM Plex Mono'", color: C.muted }}>?ëŒìŸ¾: <GradeBadge grade={current.lastGrade} /></span>}
           </div>
         </div>
 
@@ -435,8 +435,8 @@ export default function App() {
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {retryCount > 0 && <span style={{ fontSize: 11, color: C.orange, fontFamily: "'IBM Plex Mono'" }}>?¬ë„??#{retryCount}</span>}
-              {current.reviewCount > 0 && <span style={{ fontSize: 11, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?” {current.reviewCount}??/span>}
+              {retryCount > 0 && <span style={{ fontSize: 11, color: C.orange, fontFamily: "'IBM Plex Mono'" }}>?Ñ‰ë£„??#{retryCount}</span>}
+              {current.reviewCount > 0 && <span style={{ fontSize: 11, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?ë´º {current.reviewCount}??/span>}
             </div>
             <button onClick={() => toggleBookmark(current.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 22, color: current.bookmarked ? "#e8a020" : C.border, padding: 0 }}>
               {current.bookmarked ? "?? : "??}
@@ -444,7 +444,7 @@ export default function App() {
           </div>
           <p style={{ fontSize: 22, fontWeight: 700, color: C.ink, lineHeight: 1.55, margin: "0 0 18px", fontFamily: "'Nanum Gothic', sans-serif" }}>{current.korean}</p>
           <button style={mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30")} onClick={speakKorean} disabled={phase === "speaking"}>
-            {phase === "speaking" ? <><Waveform active /><span>?½ëŠ” ì¤?..</span></> : <><span>?”Š</span><span>?œêµ­???£ê¸°</span></>}
+            {phase === "speaking" ? <><Waveform active /><span>?ìˆë’— ä»¥?..</span></> : <><span>?ëµ„</span><span>?ì’“ë…???ï½Šë¦°</span></>}
           </button>
         </div>
 
@@ -452,21 +452,21 @@ export default function App() {
         {phase !== "result" && phase !== "evaluating" && (
           <div style={card}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <span style={lbl}>?ì–´ë¡?ë²ˆì—­?´ì„œ ?µí•˜?¸ìš”</span>
+              <span style={lbl}>?ê³¸ë¼±æ¿¡?è¸°ë‰ë¿­?ëŒê½Œ ?ë“¯ë¸¯?ëª„ìŠ‚</span>
               <button onClick={() => setUseTyping(t => !t)} style={{ background: "none", border: "1px solid " + C.border, borderRadius: 8, padding: "4px 10px", fontSize: 12, color: C.muted, cursor: "pointer", fontFamily: "'Nanum Gothic', sans-serif" }}>
-                {useTyping ? "?¤ ?Œì„±?¼ë¡œ" : "?¨ï¸ ?€?´í•‘?¼ë¡œ"}
+                {useTyping ? "?ë  ?ëš¯ê½¦?ì‡°ì¤ˆ" : "?â‘¨íˆ˜ ?Â€?ëŒ„ë¸¨?ì‡°ì¤ˆ"}
               </button>
             </div>
             {!useTyping ? (
               <>
-                {(phase === "ready" || phase === "listening_ready") && <button style={mkBtn(C.orangeLight, C.orange, "1px solid " + C.orange + "40")} onClick={startListening}><span>?¤</span><span>ë§í•˜ê¸??œì‘</span></button>}
-                {phase === "processing" && <div style={{ textAlign: "center", color: C.muted, fontSize: 14, padding: "12px 0", fontFamily: "'Nanum Gothic', sans-serif" }}>?™ï¸??Œì„± ì²˜ë¦¬ ì¤?..</div>}
-                {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => { try { if (recRef.current) recRef.current.stop(); } catch(e){} setPhase("processing"); }}><Waveform active /><span>?£ëŠ” ì¤?.. (??•˜ë©?ì¤‘ì?)</span></button>}
+                {(phase === "ready" || phase === "listening_ready") && <button style={mkBtn(C.orangeLight, C.orange, "1px solid " + C.orange + "40")} onClick={startListening}><span>?ë </span><span>ï§ë¨°ë¸¯æ¹²??ì’–ì˜‰</span></button>}
+                {phase === "processing" && <div style={{ textAlign: "center", color: C.muted, fontSize: 14, padding: "12px 0", fontFamily: "'Nanum Gothic', sans-serif" }}>?ëŸºæˆª??ëš¯ê½¦ ï§£ì„â” ä»¥?..</div>}
+                {phase === "listening" && <button style={mkBtn("#fee2e2", "#991b1b", "1px solid #fca5a5")} onClick={() => { try { if (recRef.current) recRef.current.stop(); } catch(e){} setPhase("processing"); }}><Waveform active /><span>?ï½‹ë’— ä»¥?.. (??ë¸¯ï§?ä»¥ë¬’?)</span></button>}
               </>
             ) : (
               <>
-                <textarea value={typedText} onChange={e => setTypedText(e.target.value)} placeholder="?ì–´ ë²ˆì—­???…ë ¥?˜ì„¸??.." rows={3} style={{ ...inp, resize: "none", marginBottom: 10 }} />
-                <button style={mkBtn(C.green, "#fff")} onClick={submitTyped} disabled={!typedText.trim()}>?œì¶œ?˜ê¸°</button>
+                <textarea value={typedText} onChange={e => setTypedText(e.target.value)} placeholder="?ê³¸ë¼± è¸°ë‰ë¿­???ë‚…ì °?ì„ê½­??.." rows={3} style={{ ...inp, resize: "none", marginBottom: 10 }} />
+                <button style={mkBtn(C.green, "#fff")} onClick={submitTyped} disabled={!typedText.trim()}>?ì’–í…§?ì„ë¦°</button>
               </>
             )}
           </div>
@@ -476,7 +476,7 @@ export default function App() {
         {phase === "evaluating" && (
           <div style={{ ...card, textAlign: "center", padding: "28px" }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>??/div>
-            <div style={{ color: C.muted, fontSize: 14, fontFamily: "'Nanum Gothic', sans-serif" }}>AIê°€ ?‰ê? ì¤‘ì´?ìš”...</div>
+            <div style={{ color: C.muted, fontSize: 14, fontFamily: "'Nanum Gothic', sans-serif" }}>AIåª›Â€ ?ë¯? ä»¥ë¬’ì” ?ë¨¯ìŠ‚...</div>
             <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, color: C.green, marginTop: 10 }}>"{spokenText}"</div>
           </div>
         )}
@@ -488,7 +488,7 @@ export default function App() {
               <GradeBadge grade={evalResult.grade} large />
               <div>
                 <div style={{ fontWeight: 700, fontSize: 16, color: C.ink, fontFamily: "'Nanum Gothic', sans-serif", marginBottom: 4 }}>
-                  {evalResult.grade === "?? ? "?Œë??´ìš”! ?‰" : evalResult.grade === "ì¤? ? "???ˆì–´?? ?‘" : "?¤ì‹œ ?„ì „?´ë´???’ª"}
+                  {evalResult.grade === "?? ? "?ëš®??ëŒìŠ‚! ?ëŸ¦" : evalResult.grade === "ä»¥? ? "???ë‰ë¼±?? ?ëª¡" : "?ã…¼ë–† ?ê¾©ìŸ¾?ëŒ€í‚„???ë®"}
                 </div>
                 <div style={{ fontSize: 13, color: C.muted, fontFamily: "'Nanum Gothic', sans-serif", lineHeight: 1.6 }}>{evalResult.feedbackKo}</div>
               </div>
@@ -496,30 +496,30 @@ export default function App() {
 
             {evalResult.grade !== "?? && (
               <div style={{ background: C.greenLight, borderRadius: 10, padding: "10px 14px", marginBottom: 14, fontSize: 12, color: C.green, fontFamily: "'Nanum Gothic', sans-serif" }}>
-                ?“… ?¤ìŒ ë³µìŠµ: {evalResult.grade === "?? ? "7???? : "3????}
+                ?ë±Ÿ ?ã…¼ì“¬ è¹‚ë“­ë’¿: {evalResult.grade === "?? ? "7???? : "3????}
               </div>
             )}
 
             {evalResult.grade === "?? && (
               <div style={{ background: "#fff5f5", border: "1.5px solid #fca5a5", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-                <div style={{ fontWeight: 700, color: "#991b1b", fontSize: 14, fontFamily: "'Nanum Gothic', sans-serif", marginBottom: 4 }}>?”„ ?¬ë„?„ì´ ?„ìš”?´ìš”!</div>
-                <div style={{ fontSize: 13, color: "#7f1d1d", fontFamily: "'Nanum Gothic', sans-serif", lineHeight: 1.6 }}>?´ì¼ ?¤ì‹œ ì¶œì œ?¼ìš”.</div>
+                <div style={{ fontWeight: 700, color: "#991b1b", fontSize: 14, fontFamily: "'Nanum Gothic', sans-serif", marginBottom: 4 }}>?ë´½ ?Ñ‰ë£„?ê¾©ì”  ?ê¾©ìŠ‚?ëŒìŠ‚!</div>
+                <div style={{ fontSize: 13, color: "#7f1d1d", fontFamily: "'Nanum Gothic', sans-serif", lineHeight: 1.6 }}>?ëŒì”ª ?ã…¼ë–† ç•°ì’–ì £?ì‡±ìŠ‚.</div>
               </div>
             )}
 
-            <span style={lbl}>?´ê? ë§í•œ ê²?/span>
+            <span style={lbl}>?ë‹¿? ï§ë¨°ë¸³ å¯ƒ?/span>
             <div style={{ background: "#f0f4ff", borderRadius: 10, padding: "12px 14px", borderLeft: "3px solid #6366f1", marginBottom: 12 }}>
               <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, color: "#3730a3" }}>"{spokenText}"</span>
             </div>
 
-            <span style={lbl}>ë² ìŠ¤??ë²ˆì—­</span>
+            <span style={lbl}>è¸°ì¢ë’ª??è¸°ë‰ë¿­</span>
             <div style={{ background: C.greenLight, borderRadius: 10, padding: "12px 14px", borderLeft: "3px solid " + C.green, marginBottom: evalResult.correctionKo ? 12 : 16 }}>
               <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, color: C.green }}>{evalResult.bestVersion}</span>
             </div>
 
             {evalResult.correctionKo && (
               <>
-                <span style={lbl}>êµì • ?¬ì¸??/span>
+                <span style={lbl}>æ´ë¨¯ì ™ ?ÑŠì”¤??/span>
                 <div style={{ background: C.midBg, borderRadius: 10, padding: "12px 14px", borderLeft: "3px solid " + C.mid, marginBottom: 16 }}>
                   <span style={{ fontSize: 13, color: C.mid, fontFamily: "'Nanum Gothic', sans-serif", lineHeight: 1.6 }}>{evalResult.correctionKo}</span>
                 </div>
@@ -528,7 +528,7 @@ export default function App() {
 
             {evalResult.grade === "?? ? (
               <>
-                <button style={mkBtn("#fee2e2", "#991b1b", "1.5px solid #fca5a5")} onClick={retry}>?”„ ?¤ì‹œ ?„ì „?˜ê¸°</button>
+                <button style={mkBtn("#fee2e2", "#991b1b", "1.5px solid #fca5a5")} onClick={retry}>?ë´½ ?ã…¼ë–† ?ê¾©ìŸ¾?ì„ë¦°</button>
                 <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
                   <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>??/button>
                   <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>??/button>
@@ -537,8 +537,8 @@ export default function App() {
             ) : (
               <>
                 <div style={{ display: "flex", gap: 10 }}>
-                  <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1 }} onClick={reset}>?”„ ?¤ì‹œ ?œë„</button>
-                  <button style={{ ...mkBtn(C.green, "#fff"), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>?¤ìŒ ë¬¸ì¥ ??/button>
+                  <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1 }} onClick={reset}>?ë´½ ?ã…¼ë–† ?ì’•ë£„</button>
+                  <button style={{ ...mkBtn(C.green, "#fff"), flex: 1, opacity: isLast ? 0.3 : 1 }} onClick={goNext} disabled={isLast}>?ã…¼ì“¬ è‡¾ëª„ì˜£ ??/button>
                 </div>
                 <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
                   <button style={{ ...mkBtn(C.bg, C.muted, "1px solid " + C.border), flex: 1, opacity: isFirst ? 0.3 : 1 }} onClick={goPrev} disabled={isFirst}>??/button>
@@ -559,9 +559,9 @@ export default function App() {
     );
   };
 
-  // ?€?€ History + Calendar View ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ History + Calendar View ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const HistoryView = () => {
-    const gc = { ?? 0, ì¤? 0, ?? 0 };
+    const gc = { ?? 0, ä»¥? 0, ?? 0 };
     history.forEach(h => gc[h.grade]++);
 
     // Streak
@@ -579,7 +579,7 @@ export default function App() {
     const firstDay = new Date(y, m, 1).getDay();
     const daysInMonth = new Date(y, m + 1, 0).getDate();
     const monthNames = ["1??,"2??,"3??,"4??,"5??,"6??,"7??,"8??,"9??,"10??,"11??,"12??];
-    const dayNames = ["??,"??,"??,"??,"ëª?,"ê¸?,"??];
+    const dayNames = ["??,"??,"??,"??,"ï§?,"æ¹²?,"??];
 
     return (
       <>
@@ -587,11 +587,11 @@ export default function App() {
         <div style={{ ...card, display: "flex", padding: 0, overflow: "hidden" }}>
           <div style={{ flex: 1, textAlign: "center", padding: "18px 0", borderRight: "1px solid " + C.border }}>
             <div style={{ fontSize: 28, fontWeight: 700, fontFamily: "'Nanum Gothic', sans-serif", color: C.orange }}>{streak}</div>
-            <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, color: C.muted, marginTop: 2 }}>?”¥ ?°ì† ?™ìŠµ??/div>
+            <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, color: C.muted, marginTop: 2 }}>?ëµ¦ ?ê³—ëƒ½ ?ìˆˆë’¿??/div>
           </div>
-          {["??,"ì¤?,"??].map((g, i) => (
+          {["??,"ä»¥?,"??].map((g, i) => (
             <div key={g} style={{ flex: 1, textAlign: "center", padding: "18px 0", borderRight: i < 2 ? "1px solid " + C.border : "none" }}>
-              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Nanum Gothic', sans-serif", color: g === "?? ? C.high : g === "ì¤? ? C.mid : C.low, marginBottom: 4 }}>{gc[g]}</div>
+              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Nanum Gothic', sans-serif", color: g === "?? ? C.high : g === "ä»¥? ? C.mid : C.low, marginBottom: 4 }}>{gc[g]}</div>
               <GradeBadge grade={g} />
             </div>
           ))}
@@ -624,22 +624,22 @@ export default function App() {
             })}
           </div>
           <div style={{ display: "flex", gap: 12, marginTop: 14, fontSize: 11, fontFamily: "'Nanum Gothic', sans-serif", color: C.muted }}>
-            <span><span style={{ display: "inline-block", width: 12, height: 12, background: C.green, borderRadius: 3, verticalAlign: "middle", marginRight: 4 }} />?™ìŠµ ?„ë£Œ</span>
-            <span><span style={{ display: "inline-block", width: 12, height: 12, background: C.greenLight, border: "1px solid " + C.green, borderRadius: 3, verticalAlign: "middle", marginRight: 4 }} />?¤ëŠ˜</span>
+            <span><span style={{ display: "inline-block", width: 12, height: 12, background: C.green, borderRadius: 3, verticalAlign: "middle", marginRight: 4 }} />?ìˆˆë’¿ ?ê¾¨ì¦º</span>
+            <span><span style={{ display: "inline-block", width: 12, height: 12, background: C.greenLight, border: "1px solid " + C.green, borderRadius: 3, verticalAlign: "middle", marginRight: 4 }} />?ã…»ë’›</span>
           </div>
         </div>
 
         {/* History list */}
         {history.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 0", color: C.muted }}>
-            <div style={{ fontFamily: "'Nanum Gothic', sans-serif" }}>?„ì§ ê¸°ë¡???†ì–´?? ?°ìŠµ???œì‘?´ë³´?¸ìš”!</div>
+            <div style={{ fontFamily: "'Nanum Gothic', sans-serif" }}>?ê¾©ì­… æ¹²ê³•ì¤‰???ë†ë¼±?? ?ê³—ë’¿???ì’–ì˜‰?ëŒ€ë‚«?ëª„ìŠ‚!</div>
           </div>
         ) : history.map(h => (
           <div key={h.id} style={{ ...card, padding: "14px 16px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <GradeBadge grade={h.grade} />
-                {h.attempt > 1 && <span style={{ fontSize: 11, color: C.orange, fontFamily: "'IBM Plex Mono'" }}>?¬ë„??#{h.attempt}</span>}
+                {h.attempt > 1 && <span style={{ fontSize: 11, color: C.orange, fontFamily: "'IBM Plex Mono'" }}>?Ñ‰ë£„??#{h.attempt}</span>}
               </div>
               <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 11, color: C.muted }}>
                 {new Date(h.date).toLocaleDateString("ko-KR", { month: "short", day: "numeric" })} {new Date(h.date).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
@@ -647,26 +647,26 @@ export default function App() {
             </div>
             <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14, fontWeight: 600, color: C.ink, marginBottom: 4 }}>{h.korean}</div>
             <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: "#6366f1", marginBottom: 3 }}>???? {h.spoken}</div>
-            <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.green }}>?•ë‹µ: {h.bestVersion}</div>
+            <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.green }}>?ëº£ë–Ÿ: {h.bestVersion}</div>
           </div>
         ))}
       </>
     );
   };
 
-  // ?€?€ Manage View ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Manage View ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const ManageView = () => {
     const manageTabs = [
-      { key: "single", label: "??ë¬¸ì¥" },
-      { key: "bulk", label: "?¼ê´„ ?…ë ¥" },
-      { key: "csv", label: "?Œì¼ ?…ë¡œ?? },
-      { key: "ai", label: "AI ?ì„±" },
+      { key: "single", label: "??è‡¾ëª„ì˜£" },
+      { key: "bulk", label: "?ì‡¨íµ ?ë‚…ì °" },
+      { key: "csv", label: "?ëš¯ì”ª ?ë‚…ì¤ˆ?? },
+      { key: "ai", label: "AI ?ì•¹ê½¦" },
     ];
     return (
       <>
         {/* Daily goal */}
         <div style={card}>
-          <span style={lbl}>?¯ ?˜ë£¨ ëª©í‘œ ë¬¸ì¥ ??/span>
+          <span style={lbl}>?ë  ?ì„ï¼ˆ ï§â‘ºëª´ è‡¾ëª„ì˜£ ??/span>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {[5, 10, 15, 20, 30].map(n => (
               <button key={n} onClick={() => { setDailyGoal(n); setExtraGoal(0); }} style={{ flex: 1, minWidth: 44, padding: "12px 8px", borderRadius: 12, border: "1.5px solid " + (dailyGoal === n ? C.green : C.border), background: dailyGoal === n ? C.greenLight : C.bg, color: dailyGoal === n ? C.green : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>
@@ -675,7 +675,7 @@ export default function App() {
             ))}
           </div>
           <div style={{ marginTop: 10, fontSize: 12, color: C.muted, fontFamily: "'Nanum Gothic', sans-serif", lineHeight: 1.6 }}>
-            ?„ì¬ ?? ë³µìŠµ ?„ìš” {sentences.filter(s => s.nextReviewDate && s.nextReviewDate <= todayStr()).length}ê°?Â· ??ë¬¸ì¥ {sentences.filter(s => !s.nextReviewDate).length}ê°?
+            ?ê¾©ì˜± ?? è¹‚ë“­ë’¿ ?ê¾©ìŠ‚ {sentences.filter(s => s.nextReviewDate && s.nextReviewDate <= todayStr()).length}åª›?ì¨Œ ??è‡¾ëª„ì˜£ {sentences.filter(s => !s.nextReviewDate).length}åª›?
           </div>
         </div>
 
@@ -693,57 +693,57 @@ export default function App() {
           {/* Single */}
           {manageTab === "single" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <span style={lbl}>?ï¸ ??ë¬¸ì¥??ì¶”ê?</span>
-              <input style={inp} placeholder="?œêµ­??ë¬¸ì¥" value={newKo} onChange={e => setNewKo(e.target.value)} />
+              <span style={lbl}>?ë¥…íˆ˜ ??è‡¾ëª„ì˜£??ç•°ë¶½?</span>
+              <input style={inp} placeholder="?ì’“ë…??è‡¾ëª„ì˜£" value={newKo} onChange={e => setNewKo(e.target.value)} />
               {newKo.trim() && (
                 <button onClick={() => autoTranslate("en")} disabled={!!translating} style={mkBtn(C.orangeLight, C.orange, "1px solid " + C.orange + "40")}>
-                  {translating === "en" ? "??ë²ˆì—­ ì¤?.." : "???ì–´ë¡??ë™ë²ˆì—­"}
+                  {translating === "en" ? "??è¸°ë‰ë¿­ ä»¥?.." : "???ê³¸ë¼±æ¿¡??ë¨®ë£è¸°ë‰ë¿­"}
                 </button>
               )}
               <input style={inp} placeholder="English translation" value={newEn} onChange={e => setNewEn(e.target.value)} />
               {newEn.trim() && (
                 <button onClick={() => autoTranslate("ko")} disabled={!!translating} style={mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30")}>
-                  {translating === "ko" ? "??ë²ˆì—­ ì¤?.." : "???œêµ­?´ë¡œ ?ë™ë²ˆì—­"}
+                  {translating === "ko" ? "??è¸°ë‰ë¿­ ä»¥?.." : "???ì’“ë…?ëŒ€ì¤ˆ ?ë¨®ë£è¸°ë‰ë¿­"}
                 </button>
               )}
               {translateError && <div style={{ fontSize: 12, color: C.low, fontFamily: "'Nanum Gothic', sans-serif", padding: "8px", background: C.lowBg, borderRadius: 8 }}>{translateError}</div>}
-              <button style={mkBtn(C.green, "#fff")} onClick={addSentence} disabled={!newKo.trim() || !newEn.trim()}>+ ì¶”ê??˜ê¸°</button>
+              <button style={mkBtn(C.green, "#fff")} onClick={addSentence} disabled={!newKo.trim() || !newEn.trim()}>+ ç•°ë¶½??ì„ë¦°</button>
             </div>
           )}
 
           {/* Bulk text */}
           {manageTab === "bulk" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <span style={lbl}>?“‹ ?¬ëŸ¬ ë¬¸ì¥ ??ë²ˆì— ?…ë ¥</span>
+              <span style={lbl}>?ë±¥ ?Ñ‰ìœ­ è‡¾ëª„ì˜£ ??è¸°ë‰ë¿‰ ?ë‚…ì °</span>
               <div style={{ fontSize: 12, color: C.muted, fontFamily: "'Nanum Gothic', sans-serif", background: C.bg, borderRadius: 8, padding: "10px 12px", lineHeight: 1.8 }}>
-                ??ì¤„ì— ?˜ë‚˜?? <strong>?œêµ­??| English</strong> ?•ì‹?¼ë¡œ ?…ë ¥?˜ì„¸??<br />
-                ?? ?€???™ìƒ?´ì—?? | I am a student.
+                ??ä»¥ê¾©ë¿‰ ?ì„êµ¹?? <strong>?ì’“ë…??| English</strong> ?ëº¤ë–‡?ì‡°ì¤ˆ ?ë‚…ì °?ì„ê½­??<br />
+                ?? ?Â€???ìˆˆê¹®?ëŒë¿‰?? | I am a student.
               </div>
               <textarea
                 value={bulkText}
                 onChange={e => setBulkText(e.target.value)}
-                placeholder={"?€???™ìƒ?´ì—?? | I am a student.\n?¤ëŠ˜ ? ì”¨ê°€ ì¢‹ì•„?? | The weather is nice today.\në°°ê? ê³ íŒŒ?? | I am hungry."}
+                placeholder={"?Â€???ìˆˆê¹®?ëŒë¿‰?? | I am a student.\n?ã…»ë’› ?ì¢ëµªåª›Â€ é†«ë—­ë¸˜?? | The weather is nice today.\nè«›ê³Œ? æ€¨ì¢ë™†?? | I am hungry."}
                 rows={8}
                 style={{ ...inp, resize: "vertical", lineHeight: 1.7 }}
               />
               {bulkError && <div style={{ fontSize: 12, color: C.low, background: C.lowBg, borderRadius: 8, padding: "8px 12px" }}>{bulkError}</div>}
               {bulkSuccess && <div style={{ fontSize: 12, color: C.green, background: C.greenLight, borderRadius: 8, padding: "8px 12px" }}>{bulkSuccess}</div>}
-              <button style={mkBtn(C.green, "#fff")} onClick={addBulk} disabled={!bulkText.trim()}>+ ?¼ê´„ ì¶”ê??˜ê¸°</button>
+              <button style={mkBtn(C.green, "#fff")} onClick={addBulk} disabled={!bulkText.trim()}>+ ?ì‡¨íµ ç•°ë¶½??ì„ë¦°</button>
             </div>
           )}
 
           {/* CSV upload */}
           {manageTab === "csv" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <span style={lbl}>?“ CSV / ?‘ì? ?Œì¼ ?…ë¡œ??/span>
+              <span style={lbl}>?ë±š CSV / ?ë¬’? ?ëš¯ì”ª ?ë‚…ì¤ˆ??/span>
               <div style={{ fontSize: 12, color: C.muted, fontFamily: "'Nanum Gothic', sans-serif", background: C.bg, borderRadius: 8, padding: "10px 12px", lineHeight: 1.8 }}>
-                <strong>CSV ?ëŠ” ?‘ì?(.csv)</strong> ?Œì¼???…ë¡œ?œí•˜?¸ìš”.<br />
-                A?? ?œêµ­??&nbsp;|&nbsp; B?? English<br />
-                êµ¬ë¶„?ëŠ” <strong>, (?¼í‘œ)</strong> ?ëŠ” <strong>| (?Œì´??</strong> ëª¨ë‘ ì§€?í•´??<br />
-                ì²?ì¤„ì´ ?¤ë”ë©??ë™?¼ë¡œ ê±´ë„ˆ?°ì–´??
+                <strong>CSV ?ë¨®ë’— ?ë¬’?(.csv)</strong> ?ëš¯ì”ª???ë‚…ì¤ˆ?ì’—ë¸¯?ëª„ìŠ‚.<br />
+                A?? ?ì’“ë…??&nbsp;|&nbsp; B?? English<br />
+                æ´Ñ‰í…‡?ë¨®ë’— <strong>, (?ì‡³ëª´)</strong> ?ë¨®ë’— <strong>| (?ëš¯ì” ??</strong> ï§â‘¤ëª¢ ï§Â€?ë¨°ë¹??<br />
+                ï§£?ä»¥ê¾©ì”  ?ã…»ëœ‘ï§??ë¨®ë£?ì‡°ì¤ˆ å«„ëŒ€ê¼«?ê³—ë¼±??
               </div>
               <label style={{ ...mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30"), cursor: "pointer", width: "auto", alignSelf: "flex-start", padding: "12px 24px" }}>
-                ?“‚ ?Œì¼ ? íƒ?˜ê¸°
+                ?ë±› ?ëš¯ì”ª ?ì¢ê¹®?ì„ë¦°
                 <input type="file" accept=".csv,.txt" onChange={handleCSV} style={{ display: "none" }} />
               </label>
               {csvError && <div style={{ fontSize: 12, color: C.low, background: C.lowBg, borderRadius: 8, padding: "8px 12px" }}>{csvError}</div>}
@@ -754,10 +754,10 @@ export default function App() {
           {/* AI generate */}
           {manageTab === "ai" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <span style={lbl}>?¤– AI ë¬¸ì¥ ?ë™ ?ì„±</span>
-              <input style={inp} placeholder="ì£¼ì œ ?…ë ¥ (? íƒ Â· ?? ë¹„ì¦ˆ?ˆìŠ¤, ?¬í–‰, ?¼ìƒ)" value={genTopic} onChange={e => setGenTopic(e.target.value)} />
+              <span style={lbl}>?ì¨¼ AI è‡¾ëª„ì˜£ ?ë¨®ë£ ?ì•¹ê½¦</span>
+              <input style={inp} placeholder="äºŒì‡±ì £ ?ë‚…ì ° (?ì¢ê¹® ì¨Œ ?? é®ê¾©ì«°?ë‰ë’ª, ?Ñ‹ë»¾, ?ì‡±ê¸½)" value={genTopic} onChange={e => setGenTopic(e.target.value)} />
               <div>
-                <div style={{ fontSize: 12, color: C.muted, marginBottom: 8, fontFamily: "'Nanum Gothic', sans-serif" }}>?ì„±??ë¬¸ì¥ ??/div>
+                <div style={{ fontSize: 12, color: C.muted, marginBottom: 8, fontFamily: "'Nanum Gothic', sans-serif" }}>?ì•¹ê½¦??è‡¾ëª„ì˜£ ??/div>
                 <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
                   {[5, 10, 20].map(n => (
                     <button key={n} onClick={() => { setGenCount(n); setGenCountCustom(""); }} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1.5px solid " + (genCount === n && !genCountCustom ? C.green : C.border), background: genCount === n && !genCountCustom ? C.greenLight : C.bg, color: genCount === n && !genCountCustom ? C.green : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>
@@ -765,10 +765,10 @@ export default function App() {
                     </button>
                   ))}
                 </div>
-                <input style={{ ...inp, textAlign: "center" }} type="number" placeholder="ì§ì ‘ ?…ë ¥ (ìµœë? 50)" value={genCountCustom} onChange={e => setGenCountCustom(e.target.value)} min={1} max={50} />
+                <input style={{ ...inp, textAlign: "center" }} type="number" placeholder="ï§ê³¸ì ’ ?ë‚…ì ° (ï§¤ì’•? 50)" value={genCountCustom} onChange={e => setGenCountCustom(e.target.value)} min={1} max={50} />
               </div>
               <button style={mkBtn(generating ? C.bg : C.orangeLight, generating ? C.muted : C.orange, "1px solid " + C.orange + "40")} onClick={generateAI} disabled={generating}>
-                {generating ? "???ì„± ì¤?.." : "??" + (genCountCustom || genCount) + "ê°?ë¬¸ì¥ ?ë™ ?ì„±"}
+                {generating ? "???ì•¹ê½¦ ä»¥?.." : "??" + (genCountCustom || genCount) + "åª›?è‡¾ëª„ì˜£ ?ë¨®ë£ ?ì•¹ê½¦"}
               </button>
             </div>
           )}
@@ -777,13 +777,13 @@ export default function App() {
         {/* Sentence list */}
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <span style={lbl}>?“š ë¬¸ì¥ ëª©ë¡ ({sentences.length}ê°?</span>
+            <span style={lbl}>?ë±´ è‡¾ëª„ì˜£ ï§â‘¸ì¤‰ ({sentences.length}åª›?</span>
           </div>
 
           {/* Search */}
           <input
             style={{ ...inp, marginBottom: 10 }}
-            placeholder="?” ê²€??.."
+            placeholder="?ëµ‡ å¯ƒÂ€??.."
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
           />
@@ -791,11 +791,11 @@ export default function App() {
           {/* Filter tabs */}
           <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap" }}>
             {[
-              { key: "all", label: "?„ì²´" },
-              { key: "new", label: "??ë¬¸ì¥" },
-              { key: "due", label: "ë³µìŠµ ?ˆì •" },
-              { key: "done", label: "?™ìŠµ ?„ë£Œ" },
-              { key: "bookmarked", label: "??ì¦ê²¨ì°¾ê¸°" },
+              { key: "all", label: "?ê¾©ê»œ" },
+              { key: "new", label: "??è‡¾ëª„ì˜£" },
+              { key: "due", label: "è¹‚ë“­ë’¿ ?ë‰ì ™" },
+              { key: "done", label: "?ìˆˆë’¿ ?ê¾¨ì¦º" },
+              { key: "bookmarked", label: "??ï§ë¨­êº¼ï§¡ì–˜ë¦°" },
             ].map(f => (
               <button key={f.key} onClick={() => setFilterStatus(f.key)} style={{ padding: "5px 12px", borderRadius: 20, border: "1.5px solid " + (filterStatus === f.key ? C.green : C.border), background: filterStatus === f.key ? C.greenLight : C.bg, color: filterStatus === f.key ? C.green : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                 {f.label}
@@ -819,14 +819,14 @@ export default function App() {
 
             if (filtered.length === 0) return (
               <div style={{ textAlign: "center", padding: "24px 0", color: C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 14 }}>
-                ê²€??ê²°ê³¼ê°€ ?†ì–´??
+                å¯ƒÂ€??å¯ƒê³Œë‚µåª›Â€ ?ë†ë¼±??
               </div>
             );
 
             const groups = filterStatus === "all" ? [
-              { label: "??ë¬¸ì¥", items: filtered.filter(s => !s.nextReviewDate), color: C.orange, bg: C.orangeLight },
-              { label: "ë³µìŠµ ?ˆì •", items: filtered.filter(s => s.nextReviewDate && s.nextReviewDate <= today), color: "#991b1b", bg: "#fee2e2" },
-              { label: "?™ìŠµ ?„ë£Œ", items: filtered.filter(s => s.nextReviewDate && s.nextReviewDate > today), color: C.green, bg: C.greenLight },
+              { label: "??è‡¾ëª„ì˜£", items: filtered.filter(s => !s.nextReviewDate), color: C.orange, bg: C.orangeLight },
+              { label: "è¹‚ë“­ë’¿ ?ë‰ì ™", items: filtered.filter(s => s.nextReviewDate && s.nextReviewDate <= today), color: "#991b1b", bg: "#fee2e2" },
+              { label: "?ìˆˆë’¿ ?ê¾¨ì¦º", items: filtered.filter(s => s.nextReviewDate && s.nextReviewDate > today), color: C.green, bg: C.greenLight },
             ] : [{ label: null, items: filtered }];
 
             return groups.map(group => (
@@ -835,7 +835,7 @@ export default function App() {
                 {group.label && (
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                     <span style={{ fontSize: 11, fontWeight: 700, background: group.bg, color: group.color, borderRadius: 8, padding: "2px 10px", fontFamily: "'Nanum Gothic', sans-serif" }}>{group.label}</span>
-                    <span style={{ fontSize: 11, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>{group.items.length}ê°?/span>
+                    <span style={{ fontSize: 11, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>{group.items.length}åª›?/span>
                   </div>
                 )}
                 {group.items.map((s, i) => (
@@ -857,16 +857,16 @@ export default function App() {
                       <div style={{ padding: "0 14px 14px", borderTop: "1px solid " + C.border }}>
                         <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 12, color: C.green, marginTop: 10, marginBottom: 8 }}>{s.english}</div>
                         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
-                          {s.addedDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?“… ?±ë¡ {s.addedDate}</span>}
-                          {s.nextReviewDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?”„ ë³µìŠµ {s.nextReviewDate}</span>}
-                          {s.reviewCount > 0 && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?” {s.reviewCount}??/span>}
+                          {s.addedDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?ë±Ÿ ?ê¹…ì¤‰ {s.addedDate}</span>}
+                          {s.nextReviewDate && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?ë´½ è¹‚ë“­ë’¿ {s.nextReviewDate}</span>}
+                          {s.reviewCount > 0 && <span style={{ fontSize: 10, color: C.muted, fontFamily: "'IBM Plex Mono'" }}>?ë´º {s.reviewCount}??/span>}
                         </div>
                         <div style={{ display: "flex", gap: 8 }}>
                           <button onClick={() => toggleBookmark(s.id)} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "1px solid " + C.border, background: s.bookmarked ? "#fef9e7" : C.bg, color: s.bookmarked ? "#e8a020" : C.muted, fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                            {s.bookmarked ? "??ì¦ê²¨ì°¾ê¸° ?´ì œ" : "??ì¦ê²¨ì°¾ê¸°"}
+                            {s.bookmarked ? "??ï§ë¨­êº¼ï§¡ì–˜ë¦° ?ëŒì £" : "??ï§ë¨­êº¼ï§¡ì–˜ë¦°"}
                           </button>
                           <button onClick={() => deleteSentence(s.id)} style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid #fca5a5", background: "#fff5f5", color: "#991b1b", fontFamily: "'Nanum Gothic', sans-serif", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                            ?? œ
+                            ??ì £
                           </button>
                         </div>
                       </div>
@@ -881,11 +881,11 @@ export default function App() {
     );
   };
 
-  // ?€?€ Render ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+  // ?Â€?Â€ Render ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
   const tabs = [
-    { key: "practice", label: "?°ìŠµ" },
-    { key: "history", label: "ê¸°ë¡" },
-    { key: "manage", label: "ê´€ë¦? },
+    { key: "practice", label: "?ê³—ë’¿" },
+    { key: "history", label: "æ¹²ê³•ì¤‰" },
+    { key: "manage", label: "æ„¿Â€ç”±? },
   ];
 
   return (
@@ -899,12 +899,12 @@ export default function App() {
               Speak<span style={{ color: C.orange }}>Up</span>
             </div>
             <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 11, color: C.muted, textAlign: "right" }}>
-              {sentences.length}ë¬¸ì¥ Â· ?”¥{(() => {
+              {sentences.length}è‡¾ëª„ì˜£ ì¨Œ ?ëµ¦{(() => {
                 const sorted = [...studyDates].sort().reverse();
                 let s = 0; let check = todayStr();
                 for (const d of sorted) { if (d === check) { s++; const dt = new Date(check); dt.setDate(dt.getDate() - 1); check = dt.toISOString().slice(0, 10); } else if (d < check) break; }
                 return s;
-              })()}???°ì†
+              })()}???ê³—ëƒ½
             </div>
           </div>
           <div style={{ display: "flex", borderBottom: "2px solid " + C.border }}>
