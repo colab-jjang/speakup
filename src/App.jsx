@@ -389,7 +389,7 @@ export default function App() {
     const learnedAll = sentences.filter(s => s.learned);
 
     if (sentences.length === 0) return (
-      <div style={{ textAlign: "center", padding: "60px 0", color: C.muted }}>
+      <div style={{ textAlign: "center", padding: "60px 0", color: C.muted, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ fontSize: 36, marginBottom: 10 }}>📭</div>
         <div style={{ fontFamily: "'Nanum Gothic', sans-serif", marginBottom: 16 }}>관리 탭에서 문장을 추가해주세요!</div>
         <button style={{ ...mkBtn(C.green, "#fff"), width: "auto", padding: "12px 24px" }} onClick={() => setView("manage")}>관리 탭으로 이동</button>
@@ -412,7 +412,7 @@ export default function App() {
 
         {/* 학습 필요 목록 */}
         {unlearned.length === 0 ? (
-          <div style={{ ...card, textAlign: "center", padding: "32px" }}>
+          <div style={{ ...card, textAlign: "center", padding: "32px", display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div style={{ fontSize: 36, marginBottom: 10 }}>🎉</div>
             <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 16, fontWeight: 700, color: C.ink, marginBottom: 8 }}>모든 문장을 학습했어요!</div>
             <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 13, color: C.muted, marginBottom: 20 }}>연습 탭에서 문제를 풀어보세요.</div>
@@ -426,7 +426,7 @@ export default function App() {
               연습에서 틀리면 다시 여기에 나타나요.
             </div>
             {unlearned.map(s => (
-              <div key={s.id} style={{ borderRadius: 12, border: "1px solid " + C.border, marginBottom: 10, background: C.paper, padding: "16px" }}>
+              <div key={s.id} style={{ borderRadius: 12, border: "1px solid " + C.border, marginBottom: 10, background: C.paper, padding: "16px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                 {s.lastGrade === "하" && (
                   <div style={{ display: "inline-block", fontSize: 10, background: C.lowBg, color: C.low, borderRadius: 6, padding: "2px 8px", fontFamily: "'Nanum Gothic', sans-serif", fontWeight: 700, marginBottom: 8 }}>
                     🔄 틀린 문장
@@ -436,7 +436,7 @@ export default function App() {
                 <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 13, color: C.green, marginBottom: 14, lineHeight: 1.5 }}>{s.english}</div>
                 <button
                   onClick={() => setSentences(prev => prev.map(x => x.id === s.id ? { ...x, learned: true } : x))}
-                  style={{ ...mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30"), width: "auto", padding: "10px 24px" }}
+                  style={{ ...mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30"), width: "auto", padding: "10px 24px", alignSelf: "center" }}
                 >
                   ✓ 완료
                 </button>
@@ -510,7 +510,7 @@ export default function App() {
     );
 
     if (!current) return (
-      <div style={{ textAlign: "center", padding: "60px 0", color: C.muted }}>
+      <div style={{ textAlign: "center", padding: "60px 0", color: C.muted, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ fontSize: 36, marginBottom: 10 }}>📭</div>
         <div style={{ fontFamily: "'Nanum Gothic', sans-serif", marginBottom: 8 }}>연습할 문장이 없어요!</div>
         <div style={{ fontFamily: "'Nanum Gothic', sans-serif", fontSize: 13, color: C.muted, marginBottom: 20, lineHeight: 1.6 }}>
@@ -851,7 +851,7 @@ export default function App() {
                 A열: 한국어 | B열: English<br />
                 구분자는 , 또는 | 모두 지원해요.
               </div>
-              <label style={{ ...mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30"), cursor: "pointer", width: "auto", alignSelf: "flex-start", padding: "12px 24px" }}>
+              <label style={{ ...mkBtn(C.greenLight, C.green, "1px solid " + C.green + "30"), cursor: "pointer", width: "auto", alignSelf: "center", padding: "12px 24px" }}>
                 📂 파일 선택하기
                 <input type="file" accept=".csv,.txt" onChange={handleCSV} style={{ display: "none" }} />
               </label>
